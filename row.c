@@ -16,9 +16,7 @@ int row_init(row_t* self, int values[], int size) {
 }
 
 int row_release(row_t* self) {
-    for (int i = 0; i < 9; i++) {
-        free(self->cells);
-    }
+    free(self->cells);
     
     return 0;
 }
