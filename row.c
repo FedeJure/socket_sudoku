@@ -2,15 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int row_init(row_t* self, int values[], int size) {
+int row_init(row_t* self, cell_t* cells, int size) {
     self->size = size;
-    self->cells = malloc(size * sizeof(cell_t));
+    self->cells = malloc(sizeof(cell_t*));
     
     for (int i = 0; i < size; i++) {
-        int value = values[i];
-        cell_t* cell = &self->cells[i];
-        cell->original_number=value;
-        cell->number = value;
+        self->cells[i] = &cells[i];
     }
     return 0;
 }

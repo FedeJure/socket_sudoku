@@ -1,5 +1,5 @@
 
 typedef struct {
-    short int original_number;
-    short int number;
+    int original_number;
+    int number;
 } cell_t;
