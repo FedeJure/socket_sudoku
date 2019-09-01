@@ -53,11 +53,17 @@ int _board_init_cells(board_t* self, int size, int values[size][size]) {
 }
 
 int board_draw(board_t* self) {
-    printf("Dibujando tablero\n"); 
-    int size = *self->size;   
-    for (size_t i = 0; i < size; i++) {
-        // row_draw(&self->rows[i]);
+    printf("U===========U===========U===========U\n");
+    int size = *self->size;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            printf(" %d ",self->cells[i][j]->number);
+        }
+        printf("\n");
+        
     }
+    printf("U===========U===========U===========U");
+    
     
     return 0;
 }

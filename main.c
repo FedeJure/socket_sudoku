@@ -8,7 +8,7 @@ int main (int argc, char* argv[]) {
     printf("Starting program...\n");
 
     sudoku_t* sudoku;
-    sudoku = malloc(sizeof( sudoku_t));
+    sudoku = malloc(sizeof(sudoku_t));
 
     sudoku_init(sudoku);
 
