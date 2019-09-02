@@ -47,6 +47,7 @@ int _board_init_cells(board_t* self, int size, int values[size][size]) {
         for (int j = 0; j < size; j++) {
             self->cells[i][j]->number = values[i][j];
             self->cells[i][j]->original_number = values[i][j];
+            self->cells[i][j]->editable = values[i][j] != 0;
         }
     }
     return 0;
@@ -67,3 +68,23 @@ int board_draw(board_t* self) {
     
     return 0;
 }
+
+// U===========U===========U===========U
+// U X | X | X U X | X | X U X | X | X U
+// U---+---+---U---+---+---U---+---+---U
+// U X | X | X U X | X | X U X | X | X U
+// U---+---+---U---+---+---U---+---+---U
+// U X | X | X U X | X | X U X | X | X U
+// U===========U===========U===========U
+// U X | X | X U X | X | X U X | X | X U
+// U---+---+---U---+---+---U---+---+---U
+// U X | X | X U X | X | X U X | X | X U
+// U---+---+---U---+---+---U---+---+---U
+// U X | X | X U X | X | X U X | X | X U
+// U===========U===========U===========U
+// U X | X | X U X | X | X U X | X | X U
+// U---+---+---U---+---+---U---+---+---U
+// U X | X | X U X | X | X U X | X | X U
+// U---+---+---U---+---+---U---+---+---U
+// U X | X | X U X | X | X U X | X | X U
+// U===========U===========U===========U
