@@ -3,7 +3,7 @@
 #include "row.h"
 
 typedef struct {
-    cell_t* cells[9][9];
+    cell_t cells[9][9];
     int size;
 } board_t;
 

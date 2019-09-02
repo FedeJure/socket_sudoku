@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 int board_init(board_t *self, int size, int values[size][size]) {
+    self->size = size;
     _board_init_cells(self, size, values);
     printf("Tablero inicializado\n");    
     return 0;
@@ -20,8 +21,7 @@ int _board_init_cells(board_t* self, int size, int values[size][size]) {
             cell.number = values[i][j];
             cell.original_number = values[i][j];
             cell.editable = values[i][j] == 0;
-            self->cells[i][j] = &cell;    
-
+            self->cells[i][j] = cell;  
         }
     }
     return 0;
@@ -29,15 +29,6 @@ int _board_init_cells(board_t* self, int size, int values[size][size]) {
 
 int board_release(board_t* self) {
     printf("Releasing Board\n");
-    // int size = self->size;
-    // for (int i = 0; i < size; i++) {
-    //     for (int j = 0; j < size; j++) {
-    //         free(self->cells[i][j]);
-    //     }
-    //     free(self->cells[i]);
-    // }
-    // free(self->cells);
-    // free(self->size);
     return 0;
 }
 

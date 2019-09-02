@@ -3,11 +3,11 @@
 #include <stdio.h>
 
 
-int row_draw(int size, cell_t* cells[size][size], int row) {
+int row_draw(int size, cell_t cells[size][size], int row) {
     char values[size];
     for (int i = 0; i < size; i++) {
-        if (cells[row][i]->number == 0) values[i] = 32;
-        else values[i] = cells[row][i]->number+'0';
+        if (cells[row][i].number == 0) values[i] = 32;
+        else values[i] = cells[row][i].number+'0';
     }
     
     printf("U %c | %c | %c U",values[0],values[1],values[2]); 

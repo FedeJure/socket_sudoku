@@ -23,6 +23,9 @@ int sudoku_init(sudoku_t* self) {
     board_t board;
     self->board = &board;
     board_init(self->board, SUDOKU_SIZE, readed);
+
+  
+
     board_draw(self->board);
     return 0; 
 }
