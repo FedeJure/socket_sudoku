@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 
-int row_draw(int size, cell_t*** cells, int row) {
+int row_draw(int size, cell_t* cells[size][size], int row) {
     char values[size];
     for (int i = 0; i < size; i++) {
         if (cells[row][i]->number == 0) values[i] = 32;

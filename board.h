@@ -3,8 +3,8 @@
 #include "row.h"
 
 typedef struct {
-    cell_t*** cells;
-    int* size;
+    cell_t* cells[9][9];
+    int size;
 } board_t;
 
 int board_init(board_t *self,int size, int values[size][size]);

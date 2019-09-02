@@ -20,8 +20,8 @@ int readed[9][9]= {
 
 int sudoku_init(sudoku_t* self) {
     printf("Initializing sudoku\n");
-    board_t* board = malloc(sizeof(board_t));
-    self->board = board;
+    board_t board;
+    self->board = &board;
     board_init(self->board, SUDOKU_SIZE, readed);
     board_draw(self->board);
     return 0; 
@@ -29,6 +29,6 @@ int sudoku_init(sudoku_t* self) {
 
 int sudoku_release(sudoku_t* self) {
     board_release(self->board);
-    free(self->board);
+    // free(self->board);
     return 0;
 }
