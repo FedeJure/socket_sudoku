@@ -10,20 +10,6 @@ int board_init(board_t *self, int size, int values[size][size]) {
     return 0;
 }
 
-int board_release(board_t* self) {
-    printf("Releasing Board\n");
-    int size = *self->size;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            free(self->cells[i][j]);
-        }
-        free(self->cells[i]);
-    }
-    free(self->cells);
-    free(self->size);
-    return 0;
-}
-
 int _board_init_storage(board_t* self, int size) {
     int* size_storage = malloc(sizeof(int));
     self->size = size_storage;
@@ -41,50 +27,61 @@ int _board_init_storage(board_t* self, int size) {
     return 0;
 }
 
+
 int _board_init_cells(board_t* self, int size, int values[size][size]) {
     printf("Creando celdas\n");  
     for (int i = 0; i<size; i++) {
         for (int j = 0; j < size; j++) {
             self->cells[i][j]->number = values[i][j];
             self->cells[i][j]->original_number = values[i][j];
-            self->cells[i][j]->editable = values[i][j] != 0;
+            self->cells[i][j]->editable = values[i][j] == 0;
         }
     }
     return 0;
 }
 
-int board_draw(board_t* self) {
-    printf("U===========U===========U===========U\n");
+int board_release(board_t* self) {
+    printf("Releasing Board\n");
     int size = *self->size;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            printf(" %d ",self->cells[i][j]->number);
+            free(self->cells[i][j]);
         }
-        printf("\n");
-        
+        free(self->cells[i]);
     }
-    printf("U===========U===========U===========U");
-    
-    
+    free(self->cells);
+    free(self->size);
     return 0;
 }
 
-// U===========U===========U===========U
-// U X | X | X U X | X | X U X | X | X U
-// U---+---+---U---+---+---U---+---+---U
-// U X | X | X U X | X | X U X | X | X U
-// U---+---+---U---+---+---U---+---+---U
-// U X | X | X U X | X | X U X | X | X U
-// U===========U===========U===========U
-// U X | X | X U X | X | X U X | X | X U
-// U---+---+---U---+---+---U---+---+---U
-// U X | X | X U X | X | X U X | X | X U
-// U---+---+---U---+---+---U---+---+---U
-// U X | X | X U X | X | X U X | X | X U
-// U===========U===========U===========U
-// U X | X | X U X | X | X U X | X | X U
-// U---+---+---U---+---+---U---+---+---U
-// U X | X | X U X | X | X U X | X | X U
-// U---+---+---U---+---+---U---+---+---U
-// U X | X | X U X | X | X U X | X | X U
-// U===========U===========U===========U
+
+int board_draw(board_t* self) {
+    _print_separator();
+    row_draw(*self->size,self->cells,0);
+    _print_line();
+    row_draw(*self->size,self->cells,1);
+    _print_line();
+    row_draw(*self->size,self->cells,2);
+    _print_separator();
+    row_draw(*self->size,self->cells,3);
+    _print_line();
+    row_draw(*self->size,self->cells,4);
+    _print_line();
+    row_draw(*self->size,self->cells,5);
+    _print_separator();
+    row_draw(*self->size,self->cells,6);
+    _print_line();
+    row_draw(*self->size,self->cells,7);
+    _print_line();
+    row_draw(*self->size,self->cells,8);
+    _print_separator();
+    return 0;
+}
+
+void _print_line() {
+    printf("U---+---+---U---+---+---U---+---+---U\n");
+}
+
+void _print_separator() {
+    printf("U===========U===========U===========U\n");
+}

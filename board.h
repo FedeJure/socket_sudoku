@@ -13,5 +13,8 @@ int _board_init_storage(board_t* self, int size);
 int _board_init_cells(board_t* self, int size, int values[size][size]);
 int _board_init_rows(board_t* self);
 int board_draw(board_t* self);
+void _print_line();
+void _print_separator();
+
     
 #endif
