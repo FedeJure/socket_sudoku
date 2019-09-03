@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "client.h"
+#include "server.h"
 
 int main (int argc, char* argv[]) {
 
@@ -65,6 +66,7 @@ int _extract_params(int argc,char* argv[], char** address, char** service, args_
 
 int _start_server(char* service) {
     printf("Starting server...\n");
+    return start_server(service);
 }
 int _start_client(char* address, char* service) {
     printf("starting client...\n");
