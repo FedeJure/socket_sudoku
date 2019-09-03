@@ -70,4 +70,5 @@ int _start_server(char* service) {
 }
 int _start_client(char* address, char* service) {
     printf("starting client...\n");
+    return start_client(address, service);
 }
