@@ -1,6 +1,7 @@
 #include "socket.h"
 #include <sys/socket.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -29,7 +30,23 @@ int socket_connect(socket_t* self, char* address, char* service) {
     return 0;
 }
 
-int socket_listen(socket_t self, char* service) {
+int socket_listen(socket_t* self, const char* service) {
+    int buffer_size = 1024;
+    struct sockaddr_in ip4addr;
+    ip4addr.sin_family = AF_INET; 
+    ip4addr.sin_addr.s_addr = INADDR_ANY; 
+    ip4addr.sin_port = htons( atoi(service) ); 
+    bind(self->fd, (const struct sockaddr*)&ip4addr,sizeof(ip4addr));
+    listen(self->fd, 5);
+
+    int runing = 1;
+    while (runing == 1) {
+        char buffer[buffer_size];
+        int readed = read(self->fd,&buffer, buffer_size);
+        if (readed == 0) {
+            printf("Val readed: %s", buffer);
+        }
+    }
     
     return 0;
 }
