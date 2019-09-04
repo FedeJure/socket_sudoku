@@ -1,10 +1,11 @@
 #include "main.h"
-#include "sudoku/sudoku.h"
+#include "sudoku.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "client.h"
 #include "server.h"
+#include "signal.h"
 
 #define CLIENT_COMMAND "client"
 #define SERVER_COMMAND "server"
@@ -12,7 +13,6 @@
 #define SERVER_COMMAND_COUNT 2
 
 int main (int argc, char* argv[]) {
-
     _check_params(argc, argv);
 
     char* address;
@@ -27,7 +27,6 @@ int _check_params(int argc, char* argv[]) {
     int count_commands = argc - 1;
 
     int response = 0;
-    char* error_message = "";
 
     
     if (count_commands < SERVER_COMMAND_COUNT || count_commands > CLIENT_COMMAND_COUNT) {

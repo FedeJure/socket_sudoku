@@ -75,4 +75,5 @@ int _socket_read(int client_fd, char* buffer, size_t size) {
         readed_size += res;
 
     }
+    return 0;
 }
