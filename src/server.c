@@ -1,15 +1,37 @@
 #include "server.h"
-#include "socket.h"
+#include <stdbool.h>
+#include <stdio.h>
 
+#define COMMAND_LENGTH 30
+ 
 int start_server(char* service) {
     socket_t socket;
-    socket_init(&socket);
+    if (socket_init(&socket) == -1) {
+        perror("Error initializing socket.\n");
+        return -1;
+    }
+    if (socket_listen(&socket, service) == -1) {
+        perror("Error listening with socket.\n");
+        return -1;
+    }
+    if (command_receive(&socket) == -1) {
+        perror("Error reading commands.\n");
+        return -1;
+    }
+    return 0;
+}
 
-    /*
-    Esto en alguna funcion para leer comandos
-    */
-    char* command = "";
-    size_t size = 32;
-    socket_listen(&socket, service, command, size);
+int command_receive(socket_t* socket) {
+    int client_fd;
+    while (true) {
+
+        if (socket_accept(socket, &client_fd, socket->service) == -1) {
+            perror("Error accepting inncomming connection\n");
+            return -1;
+        }
+        printf("asdasdsad");
+        char* command = '\0';
+        socket_read(client_fd, command, COMMAND_LENGTH);
+    }
     return 0;
 }

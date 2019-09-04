@@ -2,13 +2,17 @@
 #define _SOCKET_E
 #include <stdlib.h>
 
-typedef struct {
+
+typedef struct socket {
     int fd;
+    char* service;
 } socket_t;
 
 int socket_init(socket_t* self);
 int socket_release(socket_t* self);
 int socket_connect(socket_t* self, char* address, char* service);
-int socket_listen(socket_t* self, const char* service, char* buffer, size_t size);  
-int _socket_read(int client_fd, char* buffer, size_t size);
+int socket_listen(socket_t* self, char* service);  
+int socket_read(int client_fd, char* buffer, size_t size);
+int socket_accept(socket_t* self, int* client_fd, char* service);
+
 #endif
