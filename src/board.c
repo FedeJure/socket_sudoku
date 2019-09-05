@@ -2,6 +2,7 @@
 #include "row.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int board_init(board_t *self, int size, int values[size][size]) {
     self->size = size;
@@ -33,33 +34,46 @@ int board_release(board_t* self) {
 }
 
 
-int board_draw(board_t* self) {
-    _print_separator();
-    row_draw(self->size,self->cells,0);
-    _print_line();
-    row_draw(self->size,self->cells,1);
-    _print_line();
-    row_draw(self->size,self->cells,2);
-    _print_separator();
-    row_draw(self->size,self->cells,3);
-    _print_line();
-    row_draw(self->size,self->cells,4);
-    _print_line();
-    row_draw(self->size,self->cells,5);
-    _print_separator();
-    row_draw(self->size,self->cells,6);
-    _print_line();
-    row_draw(self->size,self->cells,7);
-    _print_line();
-    row_draw(self->size,self->cells,8);
-    _print_separator();
+int board_draw(board_t* self, char* buffer) {
+    _board_draw_separator(buffer);
+    row_draw(self->size,self->cells,0, buffer);
+    _board_draw_line(buffer);
+    row_draw(self->size,self->cells,1, buffer);
+    _board_draw_line(buffer);
+    row_draw(self->size,self->cells,2, buffer);
+    _board_draw_separator(buffer);
+    row_draw(self->size,self->cells,3, buffer);
+    _board_draw_line(buffer);
+    row_draw(self->size,self->cells,4, buffer);
+    _board_draw_line(buffer);
+    row_draw(self->size,self->cells,5, buffer);
+    _board_draw_separator(buffer);
+    row_draw(self->size,self->cells,6, buffer);
+    _board_draw_line(buffer);
+    row_draw(self->size,self->cells,7, buffer);
+    _board_draw_line(buffer);
+    row_draw(self->size,self->cells,8, buffer);
+    _board_draw_separator(buffer);
     return 0;
 }
 
-void _print_line() {
-    printf("U---+---+---U---+---+---U---+---+---U\n");
+int board_put_in_position(board_t* self, int value, int row, int cloumn) {
+
+    return 0;
+}
+int board_clean(board_t* self) {
+
+    return 0;
+}
+int board_verify(board_t* self, int* win) {
+
+    return 0;
 }
 
-void _print_separator() {
-    printf("U===========U===========U===========U\n");
+void _board_draw_line(char* buffer) {
+    strcat(buffer, "U---+---+---U---+---+---U---+---+---U\n");
+}
+
+void _board_draw_separator(char* buffer) {
+    strcat(buffer, "U===========U===========U===========U\n");
 }

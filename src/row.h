@@ -2,6 +2,6 @@
 #define _ROW_E_
 #include "cell.h"
 
-int row_draw(int size, cell_t cells[size][size], int row);
+int row_draw(int size, cell_t cells[size][size], int row, char* buffer);
 
 #endif
