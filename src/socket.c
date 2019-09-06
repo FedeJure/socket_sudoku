@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <string.h>
 #include <sys/socket.h>
 
 
@@ -74,11 +75,25 @@ int socket_read(int client_fd, char* buffer, size_t size) {
 
     int readed_size = 0;
     while(readed_size < size) {
-        int res = recv(client_fd,&buffer[readed_size], size, MSG_NOSIGNAL);
+        int res = recv(client_fd,&buffer[readed_size], size-readed_size, MSG_NOSIGNAL);
         if (res < 0) {
+            perror("Error reading buffer.\n");
+            return -1;
         }
         readed_size += res;
+    }
+    return 0;
+}
 
+int socket_send(socket_t* self, const char* buffer, int length) {
+    int sent = 0;
+    while(sent < length) {
+        int sended = send(self->fd, &buffer[sent], (size_t)length-sent, MSG_NOSIGNAL);
+        if (sended < 0) {
+            perror("Error sending buffer.\n");
+            return -1;
+        }
+        sent += sended;
     }
     return 0;
 }

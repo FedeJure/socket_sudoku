@@ -9,9 +9,8 @@
 int start_server(char* service) {
     sudoku_t sudoku;
     sudoku_init(&sudoku);
-    char buffer[1000];
-    buffer[0] = '\0';
-    sudoku_draw(&sudoku,(char*)buffer);
+    // int buffer[81];
+    // sudoku_draw(&sudoku,(char*)buffer);
     socket_t socket;
     if (socket_init(&socket) == -1) {
         perror("Error initializing socket.\n");
@@ -37,8 +36,19 @@ int command_receive(socket_t* socket) {
             perror("Error accepting inncomming connection\n");
             return -1;
         }
-        char* command = '\0';
-        socket_read(client_fd, command, COMMAND_LENGTH);
+        char command[30];
+        int res = socket_read(client_fd, command, COMMAND_LENGTH);
+        if (res == 1) {
+            perror("error receiving buffer.\n");
+            continue;
+        }
+        exit(0);
+        printf("received: %s\n",command);
     }
+    return 0;
+}
+
+int _server_build_board_to_send(sudoku_t* sudoku, int size, int*** values ) {
+    sudoku_get_board(sudoku,values);
     return 0;
 }

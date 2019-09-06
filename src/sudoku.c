@@ -62,3 +62,13 @@ int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
     return 0;
 
 }
+
+int sudoku_get_board(sudoku_t* self, int*** values) {
+    for (int i = 0; i < SUDOKU_SIZE; i++) {
+        for (int j = 0; j < SUDOKU_SIZE; j++) {
+            *values[i][j] = self->board->cells[i][j].number;
+        }
+        
+    }
+    return 0;
+}
