@@ -73,9 +73,13 @@ int board_verify(board_t* self, int* win) {
 }
 
 void _board_draw_line(char* buffer) {
-    strcat(buffer, "U---+---+---U---+---+---U---+---+---U\n");
+    printf(":%s",buffer);
+    char* aux =  "U---+---+---U---+---+---U---+---+---U\n";
+    strcat(buffer,aux);
 }
 
 void _board_draw_separator(char* buffer) {
-    strcat(buffer, "U===========U===========U===========U\n");
+    char* aux = "U===========U===========U===========U\n";
+    strcat(buffer,aux);
+    printf("%s",buffer);
 }

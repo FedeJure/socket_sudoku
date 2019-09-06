@@ -9,6 +9,9 @@
 int start_server(char* service) {
     sudoku_t sudoku;
     sudoku_init(&sudoku);
+    char buffer[1000];
+    buffer[0] = '\0';
+    sudoku_draw(&sudoku,(char*)buffer);
     socket_t socket;
     if (socket_init(&socket) == -1) {
         perror("Error initializing socket.\n");

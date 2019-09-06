@@ -13,12 +13,14 @@ int row_draw(int size, cell_t cells[size][size], int row, char* buffer) {
     char* aux = NULL;
     char* format = "U %c | %c | %c U";
     sprintf(aux, format, values[0],values[1],values[2]);
+    printf(">%s", aux);
     strcat(buffer, aux);
 
     sprintf(aux, format, values[3],values[4],values[5]);
     strcat(buffer, aux);
 
     sprintf(aux, format, values[6],values[7],values[8]);
+
     strcat(buffer, aux);
 
     strcat(buffer, "\n");    
