@@ -9,7 +9,6 @@
 int start_server(char* service) {
     sudoku_t sudoku;
     sudoku_init(&sudoku);
-
     socket_t socket;
     if (socket_init(&socket) == -1) {
         perror("Error initializing socket.\n");
@@ -23,6 +22,7 @@ int start_server(char* service) {
         perror("Error reading commands.\n");
         return -1;
     }
+
     return 0;
 }
 

@@ -25,9 +25,11 @@ int start_client(char* address, char* service) {
             perror("Error reading command\n");
             continue;
         }
-        if (input_command[0] == '\0') {
-            continue;
-        }
+        _proccess_command(input_command);
     }
+    return 0;
+}
+
+int _proccess_command(char* command) {
     return 0;
 }

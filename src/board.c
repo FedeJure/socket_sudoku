@@ -7,23 +7,20 @@
 int board_init(board_t *self, int size, int values[size][size]) {
     self->size = size;
     _board_init_cells(self, size, values);
+
     printf("Tablero inicializado\n");  
     return 0;
 }
-
-
-
 
 int _board_init_cells(board_t* self, int size, int values[size][size]) {
     printf("Creando celdas\n");
     for (int i = 0; i<size; i++) {
         for (int j = 0; j < size; j++) {
-            cell_t cell = {
-                values[i][j],
-                values[i][j],
-                values[i][j] == 0 ? 1 : 0
-            };
-            self->cells[i][j] = cell;  
+            cell_t cell;
+            self->cells[i][j] = cell; 
+            self->cells[i][j].number = values[i][j];
+            self->cells[i][j].original_number = values[i][j];
+            self->cells[i][j].editable = values[i][j] == 0 ? 1 : 0;
         }
     }
     return 0;
