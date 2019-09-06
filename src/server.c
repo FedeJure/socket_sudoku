@@ -1,10 +1,15 @@
 #include "server.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "sudoku.h"
+
 
 #define COMMAND_LENGTH 30
  
 int start_server(char* service) {
+    sudoku_t sudoku;
+    sudoku_init(&sudoku);
+
     socket_t socket;
     if (socket_init(&socket) == -1) {
         perror("Error initializing socket.\n");
@@ -29,7 +34,6 @@ int command_receive(socket_t* socket) {
             perror("Error accepting inncomming connection\n");
             return -1;
         }
-        printf("asdasdsad");
         char* command = '\0';
         socket_read(client_fd, command, COMMAND_LENGTH);
     }

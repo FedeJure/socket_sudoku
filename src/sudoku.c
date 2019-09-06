@@ -2,27 +2,17 @@
 #include "board.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-#define SUDOKU_SIZE 9
-
-int readed[9][9]= {
-    {5,3,0,0,7,0,0,0,0},
-    {6,0,0,1,9,5,0,0,0},
-    {0,9,8,0,0,0,0,6,0},
-    {8,0,0,0,6,0,0,0,3},
-    {4,0,0,8,0,3,0,0,1},
-    {7,0,0,0,2,0,0,0,6},
-    {0,6,0,0,0,0,2,8,0},
-    {0,0,0,4,1,9,0,0,5},
-    {0,0,0,0,8,0,0,7,9},
-};
+#include <string.h>
 
 
 int sudoku_init(sudoku_t* self) {
     printf("Initializing sudoku\n");
     board_t board;
+    int board_values[SUDOKU_SIZE][SUDOKU_SIZE];
     self->board = &board;
-    board_init(self->board, SUDOKU_SIZE, readed);
+    _sudoku_read_source_file(board_values);
+    board_init(self->board, SUDOKU_SIZE, board_values);
+    
     return 0; 
 }
 
@@ -46,4 +36,29 @@ int sudoku_clean(sudoku_t* self) {
 int sudoku_verify(sudoku_t* self, int* win) {
     board_verify(self->board, win);
     return 0;
+}
+
+int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
+    FILE* file;
+    file = fopen(FILE_NAME, "r");
+    int row_number = 0;
+    while(feof(file) == 0) {
+        int res = fscanf(file,"%d %d %d %d %d %d %d %d %d",
+        &values[row_number][0],
+        &values[row_number][1],
+        &values[row_number][2],
+        &values[row_number][3],
+        &values[row_number][4],
+        &values[row_number][5],
+        &values[row_number][6],
+        &values[row_number][7],
+        &values[row_number][8]
+        );
+        if (res == -1) continue;
+        row_number++;
+    }
+
+    fclose(file);
+    return 0;
+
 }
