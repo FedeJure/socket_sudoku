@@ -18,10 +18,11 @@ int _board_init_cells(board_t* self, int size, int values[size][size]) {
     printf("Creando celdas\n");
     for (int i = 0; i<size; i++) {
         for (int j = 0; j < size; j++) {
-            cell_t cell;
-            cell.number = values[i][j];
-            cell.original_number = values[i][j];
-            cell.editable = values[i][j] == 0;
+            cell_t cell = {
+                values[i][j],
+                values[i][j],
+                values[i][j] == 0 ? 1 : 0
+            };
             self->cells[i][j] = cell;  
         }
     }
@@ -62,7 +63,11 @@ int board_put_in_position(board_t* self, int value, int row, int cloumn) {
     return 0;
 }
 int board_clean(board_t* self) {
-
+    for (size_t i = 0; i < self->size; i++) {
+        for (size_t j = 0; j < self->size; j++) {
+            cell_restore(&self->cells[i][j]);
+        }
+    }
     return 0;
 }
 int board_verify(board_t* self, int* win) {
