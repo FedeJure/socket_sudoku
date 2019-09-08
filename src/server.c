@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "sudoku.h"
+#include <string.h>
 
 
 #define COMMAND_LENGTH 30
@@ -30,21 +31,22 @@ int start_server(char* service) {
 
 int command_receive(socket_t* socket) {
     int client_fd;
+    char buffer[COMMAND_LENGTH] = {0};
     while (true) {
-
         if (socket_accept(socket, &client_fd, socket->service) == -1) {
-            perror("Error accepting inncomming connection\n");
+            perror("Error accepting inncresomming connection\n");
             return -1;
         }
-        char command[30];
-        int res = socket_read(client_fd, command, COMMAND_LENGTH);
-        if (res == 1) {
-            perror("error receiving buffer.\n");
+
+        printf("Nuevo usuario conectado.\n");
+        int res = socket_read(client_fd, buffer, 3);
+        printf("Recibido: %s",buffer);
+        if (res == -1) {
+            perror("Error receiving buffer.\n");
             continue;
         }
-        exit(0);
-        printf("received: %s\n",command);
     }
+
     return 0;
 }
 
