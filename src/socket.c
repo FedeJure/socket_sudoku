@@ -73,12 +73,16 @@ int socket_accept(socket_t* self, int* client_fd, char* service) {
 
 int socket_read(int client_fd, char* buffer, int size) {
     int readed_size = 0;
+    while (readed_size < size) {      
         int res = recv(client_fd,(void*)&buffer[readed_size], size-readed_size, 0);
         printf("%d",res);
         if (res < 0) {
             printf("Error connecting.\n");
             return -1;
         }
+        readed_size+=res;
+    }
+
     return 0;
 }
 

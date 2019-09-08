@@ -4,7 +4,7 @@
 #include "board.h"
 
 #define SUDOKU_SIZE 9
-#define FILE_NAME "sudoku.txt"
+#define FILE_NAME "board.txt"
 #define FILE_SIZE 171
 
 typedef struct {
