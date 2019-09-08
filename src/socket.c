@@ -75,15 +75,13 @@ int socket_read(int client_fd, char* buffer, int size) {
     int readed_size = 0;
     while (readed_size < size) {      
         int res = recv(client_fd,(void*)&buffer[readed_size], size-readed_size, 0);
-        printf("%d",res);
         if (res < 0) {
-            printf("Error connecting.\n");
             return -1;
         }
         readed_size+=res;
     }
 
-    return 0;
+    return readed_size;
 }
 
 int socket_send(socket_t* self, const char* buffer, int length) {
@@ -91,10 +89,9 @@ int socket_send(socket_t* self, const char* buffer, int length) {
     while(sent < length) {
         int sended = send(self->fd, &buffer[sent], (size_t)length-sent, MSG_NOSIGNAL);
         if (sended < 0) {
-            perror("Error sending buffer.\n");
             return -1;
         }
         sent += sended;
     }
-    return 0;
+    return sent;
 }

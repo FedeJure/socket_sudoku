@@ -1,10 +1,17 @@
 #ifndef _SERVER_E
 #define _SERVER_E
 #include "socket.h"
+#include "sudoku.h"
+
+
+typedef struct {
+    sudoku_t* sudoku;
+    socket_t* socket;
+} server_t;
 
 
 int start_server(char* service);
-int command_receive(socket_t* socket);
-int _server_proccess_command(char* command, char* response);
+int server_command_receive(server_t* self);
+int _server_proccess_command(server_t* self, int client_fd, const char* command, char* response);
 
 #endif

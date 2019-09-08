@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <strings.h>
 #include <netinet/in.h>
 #define COMMAND_LENGTH 30
 
@@ -13,6 +14,7 @@
 
 int start_client(char* address, char* service) {
     socket_t socket;
+    int connected = 1;
     if (socket_init(&socket) == -1) {
         perror("Error initializing socket.\n");
         return -1;
@@ -23,10 +25,9 @@ int start_client(char* address, char* service) {
         return -1;
     }
 
-    while (true) {
+    while (connected == 1) {
         char* input_command;
         printf("[sudoku input]> ");
-        // int res = scanf("%s 1 in 1,2",input_command);
         fflush(stdin);
         input_command = fgets(input_command, COMMAND_LENGTH, stdin);
         _proccess_command(&socket, input_command);
@@ -44,36 +45,27 @@ int _proccess_command(socket_t* socket, const char* buffer) {
         return -1;
     }
     char command[10];
+    bzero(command,10);
 
     sscanf(buffer,"%s",command);
     if (strcmp(command,GET) == 0){
         return _client_proccess_get(socket,buffer);
     }
 
-    if (strcmp(command,PUT) == 0){
-        if (strlen(buffer) > 13) {
-            printf("command 'put' no accept params.\n");
-            return -1;
-        }
+    if (strcmp(command,PUT) == 0) {
         return _client_proccess_put(socket, buffer);
     }
 
-    if (strcmp(command,VERIFY) == 0){
-        if (strlen(buffer) > 7) {
-            printf("command 'verify' no accept params.\n");
-            return -1;
-        }
+    if (strcmp(command,VERIFY) == 0) {
+        return _client_proccess_verify(socket, buffer);
     }
 
-    if (strcmp(command,RESET) == 0){
-        if (strlen(buffer) > 6) {
-            printf("command 'reset' no accept params.\n");
-            return -1;
-        } 
+    if (strcmp(command,RESET) == 0) {
+        return _client_proccess_reset(socket, buffer);
     }
 
-    if (strcmp(command,EXIT) == 0){
-        exit(0);
+    if (strcmp(command,EXIT) == 0) {
+        return _client_proccess_exit(socket, buffer);
     }
     return 0;
 }
@@ -86,12 +78,14 @@ int _client_proccess_get(socket_t* socket, const char * buffer) {
         printf("command 'get' no accept params.\n");
         return -1;
     }
-    res = socket_send(socket, "C", 1);
+    res = socket_send(socket, "G", 1);
     if (res < 0) { return -1; }
     char* length_read = malloc(sizeof(char));
+    bzero(length_read,1);
     res = socket_read(socket->fd, length_read, 1);
+    printf("readed %d %s\n",res,length_read);
     if (res < 0) { return -1; }
-    // sscanf(length_read,"%s",network_length);
+    network_length = length_read[0];
     length = ntohl(network_length);
     char* received = malloc(sizeof(char)*length);
     res = socket_read(socket->fd, received, length);
@@ -115,5 +109,31 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
             printf("Error en los índices. Rango soportado: [1,9]\n");
             return -1;
         }
+    return 0;
+}
+
+
+int _client_proccess_verify(socket_t* socket, const char* buffer) {
+
+    if (strlen(buffer) > 7) {
+        printf("command 'verify' no accept params.\n");
+        return -1;
+    }
+    return 0;
+}
+
+
+int _client_proccess_reset(socket_t* socket, const char* buffer) {
+    if (strlen(buffer) > 6) {
+        printf("command 'reset' no accept params.\n");
+        return -1;
+    } 
+    return 0;
+}
+
+
+
+int _client_proccess_exit(socket_t* socket, const char* buffer) {
+    exit(0);
     return 0;
 }

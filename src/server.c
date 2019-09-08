@@ -1,11 +1,15 @@
 #include "server.h"
 #include <stdbool.h>
 #include <stdio.h>
-#include "sudoku.h"
 #include <string.h>
+#include <strings.h>
 
 
 #define COMMAND_LENGTH 30
+#define GET "G"
+#define PUT "P"
+#define VERIFY "V"
+#define RESET "R"
  
 int start_server(char* service) {
     sudoku_t sudoku;
@@ -13,38 +17,42 @@ int start_server(char* service) {
     // int buffer[81];
     // sudoku_draw(&sudoku,(char*)buffer);
     socket_t socket;
+    server_t self;
+    self.sudoku = &sudoku;
+    self.socket = &socket;
     if (socket_init(&socket) == -1) {
-        perror("Error initializing socket.\n");
+        // perror("Error initializing socket.\n");
         return -1;
     }
     if (socket_listen(&socket, service) == -1) {
-        perror("Error listening with socket.\n");
+        // perror("Error listening with socket.\n");
         return -1;
     }
-    if (command_receive(&socket) == -1) {
-        perror("Error reading commands.\n");
+    if (server_command_receive(&self) == -1) {
+        // perror("Error reading commands.\n");
         return -1;
     }
 
     return 0;
 }
 
-int command_receive(socket_t* socket) {
-    int client_fd;
-    char* buffer = {0};
+int server_command_receive(server_t* self) {
+    int client_fd, res;
+    char buffer[1];
+    bzero(buffer,1);
     char* response = {0};
     while (true) {
-        if (socket_accept(socket, &client_fd, socket->service) == -1) {
-            perror("Error accepting inncresomming connection\n");
+        if (socket_accept(self->socket, &client_fd, self->socket->service) == -1) {
+            // perror("Error accepting inncresomming connection\n");
             return -1;
         }
 
         printf("Nuevo usuario conectado.\n");
-        int res = socket_read(client_fd, buffer, 1);
+        res = socket_read(client_fd, buffer, 1);
         printf("Recibido: %s",buffer);
-        _server_proccess_command(buffer,response);
+        _server_proccess_command(self, client_fd, buffer,response);
         if (res == -1) {
-            perror("Error receiving buffer.\n");
+            // perror("Error receiving buffer.\n");
             continue;
         }
     }
@@ -52,8 +60,21 @@ int command_receive(socket_t* socket) {
     return 0;
 }
 
-int _server_proccess_command(char* command, char* response) {
+int _server_proccess_command(server_t* self, int client_fd, const char* command, char* response) {
+    int res;
+    if (strcmp(command, GET) == 0) {
+        res = socket_send(self->socket,"2",1);
+        return res;
+    }
+    else if (strcmp(command,PUT) == 0) {
+        res = socket_read(client_fd, response, 3);
+    }
+    else if (strcmp(command,RESET) == 0) {
 
+    }
+    else if (strcmp(command,VERIFY) == 0) {
+
+    }
     return 0;
 }
 
@@ -61,3 +82,4 @@ int _server_build_board_to_send(sudoku_t* sudoku, int size, int*** values ) {
     sudoku_get_board(sudoku,values);
     return 0;
 }
+
