@@ -23,17 +23,12 @@ int start_client(char* address, char* service) {
         perror("Error connecting to socket.\n");
         return -1;
     }
-    char* input = malloc(sizeof(char)*100);
     while (true) {
-        // char input_command[COMMAND_LENGTH];
         printf("[sudoku input]> ");
         fflush(stdin);
-        char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);
-        
-        printf("%s",input);
+        char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);        
         _proccess_command(&socket, input_command);
     }
-    free(input);
     return 0;
 }
 
