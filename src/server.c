@@ -88,9 +88,11 @@ int _server_proccess_get_command(server_t* self, int client_fd, const char* comm
     if (res < 1) {
         return -1;
     }
-    char* board = {0};
+
+    char* board = malloc(sizeof(char)*1000);
     sudoku_draw(self->sudoku,board);
-    res = socket_send(client_fd,board,10);
+    res = socket_send(client_fd,board,strlen(board)+1);
+    printf("%d \n%s",strlen(board)+1,board);
     free(board);
     return 0;
 }

@@ -1,14 +1,14 @@
 #ifndef _SUDOKU_E_
 #define _SUDOKU_E_
 
-#include "board.h"
+#include "cell.h"
 
 #define SUDOKU_SIZE 9
 #define FILE_NAME "board.txt"
 #define FILE_SIZE 171
 
 typedef struct {
-    board_t* board;
+    cell_t cells[SUDOKU_SIZE][SUDOKU_SIZE];
 } sudoku_t;
 
 int sudoku_init(sudoku_t* self);
@@ -19,6 +19,9 @@ int sudoku_clean(sudoku_t* self);
 int sudoku_verify(sudoku_t* self, int* win);
 int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]);
 int sudoku_get_board(sudoku_t* self, int*** values);
+int _sudoku_init_cells(sudoku_t* self, int values[SUDOKU_SIZE][SUDOKU_SIZE]);
+void _sudoku_draw_line(char* buffer);
+void _sudoku_draw_separator(char* buffer);
 
 
 #endif
