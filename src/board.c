@@ -80,6 +80,7 @@ void _board_draw_line(char* buffer) {
 
 void _board_draw_separator(char* buffer) {
     char* aux = "U===========U===========U===========U\n";
+    printf("%ld",sizeof(buffer));
     strcat(buffer,aux);
     printf("%s",buffer);
 }
