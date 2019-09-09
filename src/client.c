@@ -12,6 +12,9 @@
 #define RESET "reset"
 #define EXIT "exit"
 
+#define ERROR_RESPONSE "Error leyendo respuesta del servidor\n"
+#define ERROR_SENDING "Error enviando datos al servidor\n"
+
 int start_client(char* address, char* service) {
     socket_t socket;
     if (socket_init(&socket) == -1) {
@@ -45,7 +48,7 @@ int _proccess_command(socket_t* socket, const char* buffer) {
     bzero(command,COMMAND_LENGTH);
     sscanf(buffer,"%s",command);
     if (strcmp(command,GET) == 0){
-        return _client_proccess_get(socket,buffer);
+        return _client_proccess_get(socket, buffer);
     }
 
     if (strcmp(command,PUT) == 0) {
@@ -67,22 +70,26 @@ int _proccess_command(socket_t* socket, const char* buffer) {
 }
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
-    int res;
     if (strlen(buffer) > 4) {
         printf("command 'get' no accept params.\n");
         return -1;
     }
-    res = socket_send(socket->fd, "G", 1);
-    if (res < 0) { return -1; }
+    
+    if (socket_send(socket->fd, "G", 1) < 0) {
+        printf(ERROR_SENDING);
+        return -1;
+    }
     int length = socket_read_next_length(socket->fd);
     if (length < 0) { return -1; }
     
     char* received = malloc(sizeof(char)*length);
-    res = socket_read(socket->fd, received, length);
+    if (socket_read(socket->fd, received, length) < 0 ) {
+        printf(ERROR_RESPONSE);
+        return -1;
+    }
     printf("%s\n", received);
-    if (res < 0) { return -1; }
     free(received);
-    return res;
+    return 0;
 }
 
 int _client_proccess_put(socket_t* socket, const char* buffer) {
@@ -98,6 +105,29 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
             printf("Error en los índices. Rango soportado: [1,9]\n");
             return -1;
         }
+        if (socket_send(socket->fd, "P", 1) < 0) {
+            printf("Error enviando comando");
+            return -1;
+        }
+        char to_send[] = {row, column, value };
+        if (socket_send(socket->fd, to_send, 3) < 0) {
+            printf("Error enviando comando");
+            return -1;
+        }
+
+        int length = socket_read_next_length(socket->fd);
+        if (length < 0) { return -1; }
+        
+        char* received = malloc(sizeof(char)*length);
+        if (socket_read(socket->fd, received, length) < 0) {
+            printf(ERROR_RESPONSE);
+            return -1;
+        }
+
+        printf("%s\n", received);
+
+
+
     return 0;
 }
 

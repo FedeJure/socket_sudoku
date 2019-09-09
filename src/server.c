@@ -12,6 +12,7 @@
 #define PUT "P"
 #define VERIFY "V"
 #define RESET "R"
+#define INVALID_CELL "Celda no valida\n"
  
 int start_server(char* service) {
     sudoku_t sudoku;
@@ -61,10 +62,10 @@ int server_command_receive(server_t* self) {
 
 int _server_proccess_command(server_t* self, int client_fd, const char* command) {
     if (strcmp(command, GET) == 0) {
-        return _server_proccess_get_command(self, client_fd, command);
+        return _server_proccess_get_command(self, client_fd);
     }
     else if (strcmp(command,PUT) == 0) {
-        return _server_proccess_put_command(self, client_fd, command);
+        return _server_proccess_put_command(self, client_fd);
     }
     else if (strcmp(command,RESET) == 0) {
 
@@ -80,29 +81,48 @@ int _server_build_board_to_send(sudoku_t* sudoku, int size, int*** values ) {
     return 0;
 }
 
-int _server_proccess_get_command(server_t* self, int client_fd, const char* command) {
+int _server_proccess_get_command(server_t* self, int client_fd) {
+    return _server_send_board(self, client_fd);
+}
+
+int _server_proccess_put_command(server_t* self, int client_fd) {
+
+    char input[3];
+    if (socket_read(client_fd, input, 3) < 0) {
+        return -1;
+    };
+    int row = input[0];
+    int column = input[1];
+    int value = input[2];
+    if (sudoku_put_in_position(self->sudoku, value,row,column) < 0) {
+        char* response = INVALID_CELL;
+        int length = strlen(response);
+
+        if ( socket_send_next_length(client_fd, length) < 0) {
+            return -1;
+        }
+        if ( socket_send(client_fd,response,length) < 0) {
+            return -1;
+        }
+    }
+    return _server_send_board(self, client_fd);
+}
+
+int _server_send_board(server_t* self, int fd) {
     char* board = malloc(sizeof(char)*1000);
     bzero(board,sizeof(char)*1000);
     sudoku_draw(self->sudoku,board);
     int length = strlen(board);
 
-    if ( socket_send_next_length(client_fd, length) < 0) {
+    if ( socket_send_next_length(fd, length) < 0) {
+        free(board);
         return -1;
     }
-    if ( socket_send(client_fd,board,length) < 0) {
+    if ( socket_send(fd,board,length) < 0) {
+        free(board);
         return -1;
     }
 
     free(board);
-    return 0;
-}
-
-int _server_proccess_put_command(server_t* self, int client_fd, const char* command) {
-
-    char* input = malloc(sizeof(char)*(PUT_LENGTH+1));
-    if (socket_read(client_fd, input, 3) < 0) {
-        return -1;
-    };
-    printf("%s", input);
-    return 0;
+    return 0;    
 }
