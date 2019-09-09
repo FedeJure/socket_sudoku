@@ -84,10 +84,10 @@ int socket_read(int client_fd, char* buffer, int size) {
     return readed_size;
 }
 
-int socket_send(socket_t* self, const char* buffer, int length) {
+int socket_send(int socket_fd, const char* buffer, int length) {
     int sent = 0;
     while(sent < length) {
-        int sended = send(self->fd, &buffer[sent], (size_t)length-sent, MSG_NOSIGNAL);
+        int sended = send(socket_fd, &buffer[sent], (size_t)length-sent, MSG_NOSIGNAL);
         if (sended < 0) {
             return -1;
         }

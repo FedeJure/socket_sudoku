@@ -14,6 +14,6 @@ int socket_connect(socket_t* self, char* address, char* service);
 int socket_listen(socket_t* self, char* service);  
 int socket_read(int client_fd, char* buffer, int size);
 int socket_accept(socket_t* self, int* client_fd, char* service);
-int socket_send(socket_t* self, const char* buffer, int length);
+int socket_send(int socket_fd, const char* buffer, int length);
 
 #endif

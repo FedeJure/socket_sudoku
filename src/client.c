@@ -72,21 +72,20 @@ int _proccess_command(socket_t* socket, const char* buffer) {
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
     int res;
-    uint32_t length = 0;
-    uint32_t network_length = 0;
+    uint32_t length;
+    uint32_t network_length;
     if (strlen(buffer) > 4) {
         printf("command 'get' no accept params.\n");
         return -1;
     }
-    res = socket_send(socket, "G", 1);
+    res = socket_send(socket->fd, "G", 1);
     if (res < 0) { return -1; }
-    char* length_read = malloc(sizeof(char));
-    bzero(length_read,1);
-    res = socket_read(socket->fd, length_read, 1);
-    printf("readed %d %s\n",res,length_read);
+
+    socket_read(socket->fd, (char*)&network_length, 4);
+
     if (res < 0) { return -1; }
-    network_length = length_read[0];
     length = ntohl(network_length);
+    
     char* received = malloc(sizeof(char)*length);
     res = socket_read(socket->fd, received, length);
     printf("%s\n",received);

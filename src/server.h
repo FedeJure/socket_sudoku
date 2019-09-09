@@ -13,5 +13,5 @@ typedef struct {
 int start_server(char* service);
 int server_command_receive(server_t* self);
 int _server_proccess_command(server_t* self, int client_fd, const char* command, char* response);
-
+int _server_proccess_get_command(server_t* self, int client_fd, const char* command, char* response);
 #endif

@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
+#include <arpa/inet.h>
 #include <strings.h>
 
 
@@ -14,8 +16,6 @@
 int start_server(char* service) {
     sudoku_t sudoku;
     sudoku_init(&sudoku);
-    // int buffer[81];
-    // sudoku_draw(&sudoku,(char*)buffer);
     socket_t socket;
     server_t self;
     self.sudoku = &sudoku;
@@ -43,7 +43,6 @@ int server_command_receive(server_t* self) {
     char* response = {0};
     while (true) {
         if (socket_accept(self->socket, &client_fd, self->socket->service) == -1) {
-            // perror("Error accepting inncresomming connection\n");
             return -1;
         }
 
@@ -61,13 +60,11 @@ int server_command_receive(server_t* self) {
 }
 
 int _server_proccess_command(server_t* self, int client_fd, const char* command, char* response) {
-    int res;
     if (strcmp(command, GET) == 0) {
-        res = socket_send(self->socket,"2",1);
-        return res;
+        return _server_proccess_get_command(self, client_fd, command, response);
     }
     else if (strcmp(command,PUT) == 0) {
-        res = socket_read(client_fd, response, 3);
+        // res = socket_read(client_fd, response, 3);
     }
     else if (strcmp(command,RESET) == 0) {
 
@@ -83,3 +80,14 @@ int _server_build_board_to_send(sudoku_t* sudoku, int size, int*** values ) {
     return 0;
 }
 
+int _server_proccess_get_command(server_t* self, int client_fd, const char* command, char* response) {
+    int res;
+    int32_t conv = htonl(10);
+    char *data = (char*)&conv;
+    res = socket_send(client_fd,data,4);
+    if (res < 1) {
+        return -1;
+    }
+    res = socket_send(client_fd,"eeerdderd\0",10);
+    return 0;
+}
