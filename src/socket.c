@@ -95,3 +95,17 @@ int socket_send(int socket_fd, const char* buffer, int length) {
     }
     return sent;
 }
+
+int socket_send_next_length(int fd, int length) {
+    int32_t conv = htonl(length);
+    char *data = (char*)&conv;
+    return socket_send(fd,data,4);
+}
+
+int socket_read_next_length(int fd) {
+    uint32_t network_length;
+    if (socket_read(fd, (char*)&network_length, 4) < 0) {
+        return -1;
+    };
+    return (int)ntohl(network_length);
+}

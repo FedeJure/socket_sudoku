@@ -39,7 +39,6 @@ int sudoku_draw(sudoku_t* self, char* buffer) {
     _sudoku_draw_line(buffer);
     row_draw(SUDOKU_SIZE,self->cells,8, buffer);
     _sudoku_draw_separator(buffer);
-    printf("%s",buffer);
     return 0;
 }
 int sudoku_put_in_position(sudoku_t* self, int value, int row, int column) {

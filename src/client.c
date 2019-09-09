@@ -14,7 +14,6 @@
 
 int start_client(char* address, char* service) {
     socket_t socket;
-    int connected = 1;
     if (socket_init(&socket) == -1) {
         perror("Error initializing socket.\n");
         return -1;
@@ -24,14 +23,17 @@ int start_client(char* address, char* service) {
         perror("Error connecting to socket.\n");
         return -1;
     }
-
-    while (connected == 1) {
-        char* input_command;
+    char* input = malloc(sizeof(char)*100);
+    while (true) {
+        // char input_command[COMMAND_LENGTH];
         printf("[sudoku input]> ");
         fflush(stdin);
-        input_command = fgets(input_command, COMMAND_LENGTH, stdin);
+        char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);
+        
+        printf("%s",input);
         _proccess_command(&socket, input_command);
     }
+    free(input);
     return 0;
 }
 
@@ -44,9 +46,8 @@ int _proccess_command(socket_t* socket, const char* buffer) {
         printf("No pueden haber espacios antes de un comando.\n");
         return -1;
     }
-    char command[10];
-    bzero(command,10);
-
+    char command[COMMAND_LENGTH];
+    bzero(command,COMMAND_LENGTH);
     sscanf(buffer,"%s",command);
     if (strcmp(command,GET) == 0){
         return _client_proccess_get(socket,buffer);
@@ -72,23 +73,18 @@ int _proccess_command(socket_t* socket, const char* buffer) {
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
     int res;
-    uint32_t length;
-    uint32_t network_length;
     if (strlen(buffer) > 4) {
         printf("command 'get' no accept params.\n");
         return -1;
     }
     res = socket_send(socket->fd, "G", 1);
     if (res < 0) { return -1; }
-
-    socket_read(socket->fd, (char*)&network_length, 4);
-
-    if (res < 0) { return -1; }
-    length = ntohl(network_length);
+    int length = socket_read_next_length(socket->fd);
+    if (length < 0) { return -1; }
     
     char* received = malloc(sizeof(char)*length);
     res = socket_read(socket->fd, received, length);
-    printf("%s\n",received);
+    printf("%s\n", received);
     if (res < 0) { return -1; }
     free(received);
     return res;
@@ -99,7 +95,6 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
         int row;
         int column;
         sscanf(buffer, "put %d in %d,%d\n", &value, &row, &column);
-        printf("%d %d %d\n",value, row, column);
         if ((value < 1 || value > 9)) {
             printf("​Error en el valor ingresado. Rango soportado: [1,9]\n");
             return -1;
