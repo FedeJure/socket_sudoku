@@ -4,18 +4,16 @@
 #include <string.h>
 #include "row.h"
 
+#define ERROR 1
+#define SUCCESS 0
+
 
 int sudoku_init(sudoku_t* self) {
     int board_values[SUDOKU_SIZE][SUDOKU_SIZE] = {0};
     _sudoku_read_source_file(board_values);
     _sudoku_init_cells(self, board_values);
     
-    return 0; 
-}
-
-int sudoku_release(sudoku_t* self) {
-    // board_release(&self->board);
-    return 0;
+    return SUCCESS; 
 }
 
 int sudoku_draw(sudoku_t* self, char* buffer) {
@@ -38,17 +36,17 @@ int sudoku_draw(sudoku_t* self, char* buffer) {
     _sudoku_draw_line(buffer);
     row_draw(SUDOKU_SIZE,self->cells,8, buffer);
     _sudoku_draw_separator(buffer);
-    return 0;
+    return SUCCESS;
 }
 int sudoku_put_in_position(sudoku_t* self, int value, int row, int column) {
     if (value > 9 || value < 0 || row > 9 || row < 0 || column > 9 || column < 0) {
-        return -1;
+        return ERROR;
     }
     if (self->cells[row-1][column-1].editable == 0) {
-        return -1;
+        return ERROR;
     }
     self->cells[row-1][column-1].number = value;
-    return 0;
+    return SUCCESS;
 }
 int sudoku_clean(sudoku_t* self) {
     for (int i = 0; i < SUDOKU_SIZE; i++) {
@@ -60,7 +58,7 @@ int sudoku_clean(sudoku_t* self) {
         
     }
     
-    return 0;
+    return SUCCESS;
 }
 int sudoku_verify(sudoku_t* self) {
     for (int i = 0; i < SUDOKU_SIZE; i++) {
@@ -69,10 +67,10 @@ int sudoku_verify(sudoku_t* self) {
         // int zone_verify[SUDOKU_SIZE+1] = {0};
         for (int j = 0; j < SUDOKU_SIZE; j++) {
             if (self->cells[i][j].number != 0 && row_verify[self->cells[i][j].number] != 0) {
-                return -1;
+                return ERROR;
             }
             if (self->cells[j][i].number != 0 && column_verify[self->cells[j][i].number] != 0) {
-                return -1;
+                return ERROR;
             }
             // int zone_row = (i / 3) + (3* i/3);
             // int zone_column = (j % 3) + (3* j/3);
@@ -86,7 +84,7 @@ int sudoku_verify(sudoku_t* self) {
         }
 
     }
-    return 0;    
+    return SUCCESS;    
 }
     
 
@@ -112,7 +110,7 @@ int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
     }
 
     fclose(file);
-    return 0;
+    return SUCCESS;
 
 }
 
@@ -123,7 +121,7 @@ int sudoku_get_board(sudoku_t* self, int*** values) {
         }
         
     }
-    return 0;
+    return SUCCESS;
 }
 
 int _sudoku_init_cells(sudoku_t* self, int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
@@ -135,7 +133,7 @@ int _sudoku_init_cells(sudoku_t* self, int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
             self->cells[i][j].editable = values[i][j] == 0 ? 1 : 0;
         }
     }
-    return 0;
+    return SUCCESS;
 }
 
 

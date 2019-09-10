@@ -12,34 +12,34 @@
 #define RESET "reset"
 #define EXIT "exit"
 
-#define ERROR_RESPONSE "Error leyendo respuesta del servidor\n"
-#define ERROR_SENDING "Error enviando datos al servidor\n"
+#define ERROR 1
+#define SUCCESS 0
 
 int start_client(char* address, char* service) {
     socket_t socket;
     if (socket_init(&socket) == -1) {
-        return 1;
+        return ERROR;
     }
 
     if (socket_connect(&socket, address, service)) {
-        return 1;
+        return ERROR;
     }
     while (socket.fd != -1) {
         fflush(stdin);
         char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);        
         _proccess_command(&socket, input_command);
     }
-    return 0;
+    return SUCCESS;
 }
 
 int _proccess_command(socket_t* socket, const char* buffer) {
 
     if (strlen(buffer) > 20) {
-        return -1;
+        return ERROR;
     }
     if (buffer[0] == ' ') {
         fprintf(stderr,"%s\n","No pueden haber espacios antes de un comando.");
-        return -1;
+        return ERROR;
     }
     char command[COMMAND_LENGTH];
     bzero(command,COMMAND_LENGTH);
@@ -63,115 +63,105 @@ int _proccess_command(socket_t* socket, const char* buffer) {
     if (strcmp(command,EXIT) == 0) {
         return _client_proccess_exit(socket, buffer);
     }
-    return 0;
+    return ERROR;
 }
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
     if (strlen(buffer) > 4) {
-        return -1;
+        return ERROR;
     }
     
     if (socket_send(socket->fd, "G", 1) < 0) {
-        return -1;
+        return ERROR;
     }
     int length = socket_read_next_length(socket->fd);
     if (length < 0) { return -1; }
     
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0 ) {
-        return -1;
+        return ERROR;
     }
     printf("%s", received);
     free(received);
-    return 0;
+    return SUCCESS;
 }
 
 int _client_proccess_put(socket_t* socket, const char* buffer) {
-        int value;
-        int row;
-        int column;
-        sscanf(buffer, "put %d in %d,%d\n", &value, &row, &column);
-        if ((value < 1 || value > 9)) {
-            fprintf(stderr,"%s\n","​Error en el valor ingresado. Rango soportado: [1,9]");
-            return -1;
-        }
-        if ((row < 1 || row > 9) || (column < 1 || column > 9)) {
-            fprintf(stderr,"%s\n","Error en los índices. Rango soportado: [1,9]");
-            return -1;
-        }
-        if (socket_send(socket->fd, "P", 1) < 0) {
-            return -1;
-        }
-        char to_send[] = {row, column, value };
-        if (socket_send(socket->fd, to_send, 3) < 0) {
-            return -1;
-        }
+    int value;
+    int row;
+    int column;
+    sscanf(buffer, "put %d in %d,%d\n", &value, &row, &column);
+    if ((value < 1 || value > 9)) {
+        fprintf(stderr,"%s\n","​Error en el valor ingresado. Rango soportado: [1,9]");
+        return ERROR;
+    }
+    if ((row < 1 || row > 9) || (column < 1 || column > 9)) {
+        fprintf(stderr,"%s\n","Error en los índices. Rango soportado: [1,9]");
+        return ERROR;
+    }
+    if (socket_send(socket->fd, "P", 1) < 0) {
+        return ERROR;
+    }
+    char to_send[] = {row, column, value };
+    if (socket_send(socket->fd, to_send, 3) < 0) {
+        return ERROR;
+    }
 
-        int length = socket_read_next_length(socket->fd);
-        if (length < 0) { return -1; }
-        
-        char* received = malloc(sizeof(char)*length);
-        if (socket_read(socket->fd, received, length) < 0) {
-            fprintf(stderr,"%s",ERROR_RESPONSE);
-            return -1;
-        }
-
-        printf("%s", received);
-
-
-
-    return 0;
+    int length = socket_read_next_length(socket->fd);
+    if (length < 0) { return ERROR; }
+    
+    char* received = malloc(sizeof(char)*length);
+    if (socket_read(socket->fd, received, length) < 0) {
+        return ERROR;
+    }
+    printf("%s", received);
+    return SUCCESS;
 }
 
 
 int _client_proccess_verify(socket_t* socket, const char* buffer) {
 
     if (strlen(buffer) > 7) {
-        return -1;
+        return ERROR;
     }
     if (socket_send(socket->fd, "V", 1) < 0) {
-        return -1;
+        return ERROR;
     }
 
     int length = socket_read_next_length(socket->fd);
-    if (length < 0) { return -1; }
+    if (length < 0) { return ERROR; }
     
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
-        fprintf(stderr,"%s",ERROR_RESPONSE);
-        return -1;
+        return ERROR;
     }
 
     printf("%s", received);
 
-    return 0;
+    return SUCCESS;
 }
 
 
 int _client_proccess_reset(socket_t* socket, const char* buffer) {
     if (strlen(buffer) > 6) {
-        return -1;
+        return ERROR;
     } 
     if (socket_send(socket->fd, "R", 1) < 0) {
-        return -1;
+        return ERROR;
     }
-
     int length = socket_read_next_length(socket->fd);
-    if (length < 0) { return -1; }
-    
+    if (length < 0) { return ERROR; }
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
-        fprintf(stderr,"%s",ERROR_RESPONSE);
-        return -1;
+        return ERROR;
     }
-
     printf("%s", received);
-    return 0;
+    return SUCCESS;
 }
 
 
 
 int _client_proccess_exit(socket_t* socket, const char* buffer) {
     socket_release(socket);
-    return 0;
+    return SUCCESS;
 }

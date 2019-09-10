@@ -13,6 +13,8 @@
 #define VERIFY "V"
 #define RESET "R"
 #define INVALID_CELL "Celda no valida\n"
+#define ERROR 1
+#define SUCCESS 0
  
 int start_server(char* service) {
     sudoku_t sudoku;
@@ -22,16 +24,16 @@ int start_server(char* service) {
     self.sudoku = &sudoku;
     self.socket = &socket;
     if (socket_init(&socket) == -1) {
-        return -1;
+        return ERROR;
     }
     if (socket_listen(&socket, service) == -1) {
-        return -1;
+        return ERROR;
     }
     if (server_command_receive(&self) == -1) {
-        return -1;
+        return ERROR;
     }
 
-    return 0;
+    return SUCCESS;
 }
 
 int server_command_receive(server_t* self) {
@@ -53,7 +55,7 @@ int server_command_receive(server_t* self) {
 
     }
 
-    return 0;
+    return SUCCESS;
 }
 
 int _server_proccess_command(server_t* self, int client_fd, const char* command) {
@@ -69,12 +71,12 @@ int _server_proccess_command(server_t* self, int client_fd, const char* command)
     else if (strcmp(command,VERIFY) == 0) {
         return _server_proccess_verify_command(self, client_fd);
     }
-    return 0;
+    return SUCCESS;
 }
 
 int _server_build_board_to_send(sudoku_t* sudoku, int size, int*** values ) {
     sudoku_get_board(sudoku,values);
-    return 0;
+    return SUCCESS;
 }
 
 int _server_proccess_get_command(server_t* self, int client_fd) {
@@ -91,15 +93,15 @@ int _server_proccess_put_command(server_t* self, int client_fd) {
     int column = input[1];
     int value = input[2];
     int res = sudoku_put_in_position(self->sudoku, value,row,column);
-    if (res < 0) {
+    if (res != SUCCESS) {
         char* response = INVALID_CELL;
         int length = strlen(response);
 
         if ( socket_send_next_length(client_fd, length) < 0) {
-            return -1;
+            return ERROR;
         }
         if ( socket_send(client_fd,response,length) < 0) {
-            return -1;
+            return ERROR;
         }
     }
     return _server_send_board(self, client_fd);
@@ -113,15 +115,15 @@ int _server_send_board(server_t* self, int fd) {
 
     if ( socket_send_next_length(fd, length) < 0) {
         free(board);
-        return -1;
+        return ERROR;
     }
     if ( socket_send(fd,board,length) < 0) {
         free(board);
-        return -1;
+        return ERROR;
     }
 
     free(board);
-    return 0;    
+    return SUCCESS;
 }
 
 int _server_proccess_reset_command(server_t* self,int client_fd) {
@@ -141,7 +143,7 @@ int _server_proccess_verify_command(server_t* self,int client_fd) {
     }
     length = strlen(response);
     if (socket_send_next_length(client_fd, length) < 0 ) {
-        return -1;
+        return ERROR;
     }
     return socket_send(client_fd, response, length);
 }

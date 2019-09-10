@@ -11,6 +11,9 @@
 #define CLIENT_COMMAND_COUNT 3
 #define SERVER_COMMAND_COUNT 2
 
+#define ERROR 1
+#define SUCCESS 0
+
 int main (int argc, char* argv[]) {
     _check_params(argc, argv);
 
@@ -29,15 +32,15 @@ int _check_params(int argc, char* argv[]) {
 
     
     if (count_commands < SERVER_COMMAND_COUNT || count_commands > CLIENT_COMMAND_COUNT) {
-        exit(1);
+        exit(ERROR);
     }
 
     if (count_commands > 0 && strcmp(argv[1], CLIENT_COMMAND) == 0 && count_commands != CLIENT_COMMAND_COUNT) {
-        exit(1);
+        exit(ERROR);
     }
 
     if (count_commands > 0 && strcmp(argv[1], SERVER_COMMAND) == 0 && count_commands != SERVER_COMMAND_COUNT) {
-        exit(1);
+        exit(ERROR);
     }
     return response;
 }
@@ -51,7 +54,7 @@ int _extract_params(int argc,char* argv[], char** address, char** service) {
         *service = argv[2];
     }
     
-    return 0;
+    return ERROR;
 }
 
 int _start_server(char* service) {
