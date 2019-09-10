@@ -18,16 +18,13 @@
 int start_client(char* address, char* service) {
     socket_t socket;
     if (socket_init(&socket) == -1) {
-        perror("Error initializing socket.\n");
-        return -1;
+        return 1;
     }
 
     if (socket_connect(&socket, address, service)) {
-        perror("Error connecting to socket.\n");
-        return -1;
+        return 1;
     }
-    while (true) {
-        printf("[sudoku input]> ");
+    while (socket.fd != -1) {
         fflush(stdin);
         char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);        
         _proccess_command(&socket, input_command);
@@ -41,7 +38,7 @@ int _proccess_command(socket_t* socket, const char* buffer) {
         return -1;
     }
     if (buffer[0] == ' ') {
-        printf("No pueden haber espacios antes de un comando.\n");
+        fprintf(stderr,"%s\n","No pueden haber espacios antes de un comando.");
         return -1;
     }
     char command[COMMAND_LENGTH];
@@ -71,12 +68,10 @@ int _proccess_command(socket_t* socket, const char* buffer) {
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
     if (strlen(buffer) > 4) {
-        printf("command 'get' no accept params.\n");
         return -1;
     }
     
     if (socket_send(socket->fd, "G", 1) < 0) {
-        printf(ERROR_SENDING);
         return -1;
     }
     int length = socket_read_next_length(socket->fd);
@@ -84,10 +79,9 @@ int _client_proccess_get(socket_t* socket, const char * buffer) {
     
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0 ) {
-        printf(ERROR_RESPONSE);
         return -1;
     }
-    printf("%s\n", received);
+    printf("%s", received);
     free(received);
     return 0;
 }
@@ -98,20 +92,18 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
         int column;
         sscanf(buffer, "put %d in %d,%d\n", &value, &row, &column);
         if ((value < 1 || value > 9)) {
-            printf("​Error en el valor ingresado. Rango soportado: [1,9]\n");
+            fprintf(stderr,"%s\n","​Error en el valor ingresado. Rango soportado: [1,9]");
             return -1;
         }
         if ((row < 1 || row > 9) || (column < 1 || column > 9)) {
-            printf("Error en los índices. Rango soportado: [1,9]\n");
+            fprintf(stderr,"%s\n","Error en los índices. Rango soportado: [1,9]");
             return -1;
         }
         if (socket_send(socket->fd, "P", 1) < 0) {
-            printf("Error enviando comando");
             return -1;
         }
         char to_send[] = {row, column, value };
         if (socket_send(socket->fd, to_send, 3) < 0) {
-            printf("Error enviando comando");
             return -1;
         }
 
@@ -120,11 +112,11 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
         
         char* received = malloc(sizeof(char)*length);
         if (socket_read(socket->fd, received, length) < 0) {
-            printf(ERROR_RESPONSE);
+            fprintf(stderr,"%s",ERROR_RESPONSE);
             return -1;
         }
 
-        printf("%s\n", received);
+        printf("%s", received);
 
 
 
@@ -135,11 +127,9 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
 int _client_proccess_verify(socket_t* socket, const char* buffer) {
 
     if (strlen(buffer) > 7) {
-        printf("command 'verify' no accept params.\n");
         return -1;
     }
     if (socket_send(socket->fd, "V", 1) < 0) {
-        printf("Error enviando comando");
         return -1;
     }
 
@@ -148,11 +138,11 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
     
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
-        printf(ERROR_RESPONSE);
+        fprintf(stderr,"%s",ERROR_RESPONSE);
         return -1;
     }
 
-    printf("%s\n", received);
+    printf("%s", received);
 
     return 0;
 }
@@ -160,15 +150,28 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
 
 int _client_proccess_reset(socket_t* socket, const char* buffer) {
     if (strlen(buffer) > 6) {
-        printf("command 'reset' no accept params.\n");
         return -1;
     } 
+    if (socket_send(socket->fd, "R", 1) < 0) {
+        return -1;
+    }
+
+    int length = socket_read_next_length(socket->fd);
+    if (length < 0) { return -1; }
+    
+    char* received = malloc(sizeof(char)*length);
+    if (socket_read(socket->fd, received, length) < 0) {
+        fprintf(stderr,"%s",ERROR_RESPONSE);
+        return -1;
+    }
+
+    printf("%s", received);
     return 0;
 }
 
 
 
 int _client_proccess_exit(socket_t* socket, const char* buffer) {
-    exit(0);
+    socket_release(socket);
     return 0;
 }

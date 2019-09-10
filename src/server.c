@@ -22,15 +22,12 @@ int start_server(char* service) {
     self.sudoku = &sudoku;
     self.socket = &socket;
     if (socket_init(&socket) == -1) {
-        // perror("Error initializing socket.\n");
         return -1;
     }
     if (socket_listen(&socket, service) == -1) {
-        // perror("Error listening with socket.\n");
         return -1;
     }
     if (server_command_receive(&self) == -1) {
-        // perror("Error reading commands.\n");
         return -1;
     }
 
@@ -51,7 +48,6 @@ int server_command_receive(server_t* self) {
         }
         
         if (_server_proccess_command(self, client_fd, buffer) < 1) {
-            // perror("Error receiving buffer.\n");
             continue;
         }
 
@@ -94,7 +90,8 @@ int _server_proccess_put_command(server_t* self, int client_fd) {
     int row = input[0];
     int column = input[1];
     int value = input[2];
-    if (sudoku_put_in_position(self->sudoku, value,row,column) < 0) {
+    int res = sudoku_put_in_position(self->sudoku, value,row,column);
+    if (res < 0) {
         char* response = INVALID_CELL;
         int length = strlen(response);
 
@@ -135,10 +132,13 @@ int _server_proccess_reset_command(server_t* self,int client_fd) {
 int _server_proccess_verify_command(server_t* self,int client_fd) {
     char* response;
     int length;
-    if (sudoku_verify(self->sudoku) < 0) {
+    int verified = sudoku_verify(self->sudoku);
+    if (verified < 0) {
         response = "ERROR\n";
     }
-    response = "OK\n";
+    else {
+        response = "OK\n";
+    }
     length = strlen(response);
     if (socket_send_next_length(client_fd, length) < 0 ) {
         return -1;

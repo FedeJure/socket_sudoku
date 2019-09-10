@@ -6,8 +6,7 @@
 
 
 int sudoku_init(sudoku_t* self) {
-    printf("Initializing sudoku\n");
-    int board_values[SUDOKU_SIZE][SUDOKU_SIZE];
+    int board_values[SUDOKU_SIZE][SUDOKU_SIZE] = {0};
     _sudoku_read_source_file(board_values);
     _sudoku_init_cells(self, board_values);
     
@@ -69,28 +68,30 @@ int sudoku_verify(sudoku_t* self) {
         int column_verify[SUDOKU_SIZE+1] = {0};
         // int zone_verify[SUDOKU_SIZE+1] = {0};
         for (int j = 0; j < SUDOKU_SIZE; j++) {
-            if (row_verify[self->cells[i][j].number] != 0) {
+            if (self->cells[i][j].number != 0 && row_verify[self->cells[i][j].number] != 0) {
                 return -1;
             }
-            if (column_verify[self->cells[j][i].number] != 0) {
+            if (self->cells[j][i].number != 0 && column_verify[self->cells[j][i].number] != 0) {
                 return -1;
             }
             // int zone_row = (i / 3) + (3* i/3);
             // int zone_column = (j % 3) + (3* j/3);
-            // if (zone_verify[self->cells[zone_row][zone_column].number -1] != 0) {
-                // return -1;
+            // fprintf(stdout, "%d %d %d %d\n", i,j,zone_row,zone_column);
+            // if (self->cells[zone_row][zone_column].number -1 != 0 && zone_verify[self->cells[zone_row][zone_column].number -1] != 0) {
+            //     return -1;
             // }
             row_verify[self->cells[i][j].number] = 1;
             column_verify[self->cells[j][i].number] = 1;
             // zone_verify[self->cells[zone_row][zone_column].number] = 1;
         }
+
     }
     return 0;    
 }
     
 
 
-int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
+int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {    
     FILE* file;
     file = fopen(FILE_NAME, "r");
     int row_number = 0;
@@ -126,7 +127,6 @@ int sudoku_get_board(sudoku_t* self, int*** values) {
 }
 
 int _sudoku_init_cells(sudoku_t* self, int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
-    printf("Creando celdas\n");
     for (int i = 0; i<SUDOKU_SIZE; i++) {
         for (int j = 0; j < SUDOKU_SIZE; j++) {
             cell_t cell;

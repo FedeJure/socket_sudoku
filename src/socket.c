@@ -1,3 +1,6 @@
+#ifndef _SOCKET_E_
+#define _SOCKET_E_
+
 #include "socket.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +11,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <sys/socket.h>
-
+#include <netdb.h>
 
 #define ALLOWED_CONNECTIONS 1
 #define BUFFER_SIZE 30
@@ -20,15 +23,33 @@ int socket_init(socket_t* self) {
 
 int socket_release(socket_t* self) {
     close(self->fd);
+    self->fd = -1;
     return 0;
 }
 
-int socket_connect(socket_t* self, char* address, char* service) {
+int socket_connect(socket_t* self, const char* address, char* service) {
     struct sockaddr_in ip4addr;
+    // struct addrinfo *ai_list, *ptr;
+    // int socketFd = -1;
+
     self->service = service;
     ip4addr.sin_family = AF_INET;
     ip4addr.sin_port = htons(atoi(service));
+
+    // int s = getaddrinfo(address, service, &ip4addr, &ai_list);
     inet_pton(AF_INET, address, &ip4addr.sin_addr);
+
+    // bool are_we_connected = false;
+    // for (ptr = ai_list; ptr != NULL && are_we_connected == false; ptr = ptr->ai_next) {
+    //     // TODO: chequear errores
+    //     socketFd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+    //     int res = connect(socketFd, ptr->ai_addr, ptr->ai_addrlen);
+    //     if (res == -1) {
+    //         close(socketFd);
+    //     }
+    //     are_we_connected = (s != -1); // nos conectamos?
+    // }
+
     int res = connect(self->fd,(struct sockaddr*)&ip4addr, sizeof(ip4addr));
     
     if (res == -1) {
@@ -44,7 +65,6 @@ int socket_listen(socket_t* self, char* service) {
     ip4addr.sin_family = AF_INET; 
     ip4addr.sin_addr.s_addr = INADDR_ANY; 
     ip4addr.sin_port = htons( atoi(service) ); 
-    
     int binded = bind(self->fd, (const struct sockaddr*)&ip4addr,sizeof(ip4addr));
     if (binded == -1) {
         return -1;
@@ -109,3 +129,5 @@ int socket_read_next_length(int fd) {
     };
     return (int)ntohl(network_length);
 }
+
+#endif

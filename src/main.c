@@ -29,22 +29,16 @@ int _check_params(int argc, char* argv[]) {
 
     
     if (count_commands < SERVER_COMMAND_COUNT || count_commands > CLIENT_COMMAND_COUNT) {
-        response = -1;
-        perror("Invalid arguments passed\n");
+        exit(1);
     }
 
     if (count_commands > 0 && strcmp(argv[1], CLIENT_COMMAND) == 0 && count_commands != CLIENT_COMMAND_COUNT) {
-        response = -1;
-        perror("Invalid number of argument for 'client' command\n");
+        exit(1);
     }
 
     if (count_commands > 0 && strcmp(argv[1], SERVER_COMMAND) == 0 && count_commands != SERVER_COMMAND_COUNT) {
-        response = -1;
-        perror("Invalid number of argument for 'server' command\n");        
+        exit(1);
     }
-
-    if (response == -1) exit(0);
-
     return response;
 }
 
@@ -61,10 +55,8 @@ int _extract_params(int argc,char* argv[], char** address, char** service) {
 }
 
 int _start_server(char* service) {
-    printf("Starting server...\n");
     return start_server(service);
 }
 int _start_client(char* address, char* service) {
-    printf("starting client...\n");
     return start_client(address, service);
 }
