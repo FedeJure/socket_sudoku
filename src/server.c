@@ -68,10 +68,10 @@ int _server_proccess_command(server_t* self, int client_fd, const char* command)
         return _server_proccess_put_command(self, client_fd);
     }
     else if (strcmp(command,RESET) == 0) {
-
+        return _server_proccess_reset_command(self, client_fd);
     }
     else if (strcmp(command,VERIFY) == 0) {
-
+        return _server_proccess_verify_command(self, client_fd);
     }
     return 0;
 }
@@ -125,4 +125,23 @@ int _server_send_board(server_t* self, int fd) {
 
     free(board);
     return 0;    
+}
+
+int _server_proccess_reset_command(server_t* self,int client_fd) {
+    sudoku_clean(self->sudoku);
+    return _server_send_board(self,client_fd);
+}
+
+int _server_proccess_verify_command(server_t* self,int client_fd) {
+    char* response;
+    int length;
+    if (sudoku_verify(self->sudoku) < 0) {
+        response = "ERROR\n";
+    }
+    response = "OK\n";
+    length = strlen(response);
+    if (socket_send_next_length(client_fd, length) < 0 ) {
+        return -1;
+    }
+    return socket_send(client_fd, response, length);
 }

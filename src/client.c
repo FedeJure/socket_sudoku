@@ -138,6 +138,22 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
         printf("command 'verify' no accept params.\n");
         return -1;
     }
+    if (socket_send(socket->fd, "V", 1) < 0) {
+        printf("Error enviando comando");
+        return -1;
+    }
+
+    int length = socket_read_next_length(socket->fd);
+    if (length < 0) { return -1; }
+    
+    char* received = malloc(sizeof(char)*length);
+    if (socket_read(socket->fd, received, length) < 0) {
+        printf(ERROR_RESPONSE);
+        return -1;
+    }
+
+    printf("%s\n", received);
+
     return 0;
 }
 

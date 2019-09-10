@@ -42,17 +42,53 @@ int sudoku_draw(sudoku_t* self, char* buffer) {
     return 0;
 }
 int sudoku_put_in_position(sudoku_t* self, int value, int row, int column) {
-    // board_put_in_position(&self->board, value, row, column);
+    if (value > 9 || value < 0 || row > 9 || row < 0 || column > 9 || column < 0) {
+        return -1;
+    }
+    if (self->cells[row-1][column-1].editable == 0) {
+        return -1;
+    }
+    self->cells[row-1][column-1].number = value;
     return 0;
 }
 int sudoku_clean(sudoku_t* self) {
-    // board_clean(&self->board);
+    for (int i = 0; i < SUDOKU_SIZE; i++) {
+        for (int j = 0; j < SUDOKU_SIZE; j++) {
+            if (self->cells[i][j].editable == 1) {
+                self->cells[i][j].number = 0;
+            }
+        }
+        
+    }
+    
     return 0;
 }
-int sudoku_verify(sudoku_t* self, int* win) {
-    // board_verify(&self->board, win);
-    return 0;
+int sudoku_verify(sudoku_t* self) {
+    for (int i = 0; i < SUDOKU_SIZE; i++) {
+        int row_verify[SUDOKU_SIZE+1] = {0};
+        int column_verify[SUDOKU_SIZE+1] = {0};
+        // int zone_verify[SUDOKU_SIZE+1] = {0};
+        for (int j = 0; j < SUDOKU_SIZE; j++) {
+            if (row_verify[self->cells[i][j].number] != 0) {
+                return -1;
+            }
+            if (column_verify[self->cells[j][i].number] != 0) {
+                return -1;
+            }
+            // int zone_row = (i / 3) + (3* i/3);
+            // int zone_column = (j % 3) + (3* j/3);
+            // if (zone_verify[self->cells[zone_row][zone_column].number -1] != 0) {
+                // return -1;
+            // }
+            row_verify[self->cells[i][j].number] = 1;
+            column_verify[self->cells[j][i].number] = 1;
+            // zone_verify[self->cells[zone_row][zone_column].number] = 1;
+        }
+    }
+    return 0;    
 }
+    
+
 
 int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
     FILE* file;
