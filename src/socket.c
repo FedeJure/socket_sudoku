@@ -1,6 +1,8 @@
 #ifndef _SOCKET_E_
 #define _SOCKET_E_
 
+#define _POSIX_C_SOURCE 200112l
+
 #include "socket.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +35,6 @@ int socket_release(socket_t* self) {
 int socket_connect(socket_t* self, const char* address, char* service) {
     struct sockaddr_in ip4addr;
     // struct addrinfo *ai_list, *ptr;
-    // int socketFd = -1;
 
     self->service = service;
     ip4addr.sin_family = AF_INET;
@@ -41,14 +42,13 @@ int socket_connect(socket_t* self, const char* address, char* service) {
 
     // int s = getaddrinfo(address, service, &ip4addr, &ai_list);
     inet_pton(AF_INET, address, &ip4addr.sin_addr);
-
+    
     // bool are_we_connected = false;
     // for (ptr = ai_list; ptr != NULL && are_we_connected == false; ptr = ptr->ai_next) {
     //     // TODO: chequear errores
-    //     socketFd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-    //     int res = connect(socketFd, ptr->ai_addr, ptr->ai_addrlen);
+    //     int res = connect(self->fd, ptr->ai_addr, ptr->ai_addrlen);
     //     if (res == -1) {
-    //         close(socketFd);
+    //         close(self->fd);
     //     }
     //     are_we_connected = (s != -1); // nos conectamos?
     // }

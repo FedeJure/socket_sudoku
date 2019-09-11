@@ -27,9 +27,6 @@ int main (int argc, char* argv[]) {
 
 int _check_params(int argc, char* argv[]) {
     int count_commands = argc - 1;
-
-    int response = 0;
-
     
     if (count_commands < SERVER_COMMAND_COUNT || count_commands > CLIENT_COMMAND_COUNT) {
         exit(ERROR);
@@ -42,7 +39,7 @@ int _check_params(int argc, char* argv[]) {
     if (count_commands > 0 && strcmp(argv[1], SERVER_COMMAND) == 0 && count_commands != SERVER_COMMAND_COUNT) {
         exit(ERROR);
     }
-    return response;
+    return SUCCESS;
 }
 
 int _extract_params(int argc,char* argv[], char** address, char** service) {

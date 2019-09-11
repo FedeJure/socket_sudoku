@@ -61,10 +61,11 @@ int sudoku_clean(sudoku_t* self) {
     return SUCCESS;
 }
 int sudoku_verify(sudoku_t* self) {
+    int zone_size = 3;
     for (int i = 0; i < SUDOKU_SIZE; i++) {
         int row_verify[SUDOKU_SIZE+1] = {0};
         int column_verify[SUDOKU_SIZE+1] = {0};
-        // int zone_verify[SUDOKU_SIZE+1] = {0};
+        int zone_verify[SUDOKU_SIZE+1] = {0};
         for (int j = 0; j < SUDOKU_SIZE; j++) {
             if (self->cells[i][j].number != 0 && row_verify[self->cells[i][j].number] != 0) {
                 return ERROR;
@@ -72,17 +73,15 @@ int sudoku_verify(sudoku_t* self) {
             if (self->cells[j][i].number != 0 && column_verify[self->cells[j][i].number] != 0) {
                 return ERROR;
             }
-            // int zone_row = (i / 3) + (3* i/3);
-            // int zone_column = (j % 3) + (3* j/3);
-            // fprintf(stdout, "%d %d %d %d\n", i,j,zone_row,zone_column);
-            // if (self->cells[zone_row][zone_column].number -1 != 0 && zone_verify[self->cells[zone_row][zone_column].number -1] != 0) {
-            //     return -1;
-            // }
+            int zone_row = (j / zone_size) + zone_size * (i / zone_size);
+            int zone_column = (j % zone_size) + zone_size * (i % zone_size);
+            if (self->cells[zone_row][zone_column].number != 0 && zone_verify[self->cells[zone_row][zone_column].number] != 0) {
+                return ERROR;
+            }
             row_verify[self->cells[i][j].number] = 1;
             column_verify[self->cells[j][i].number] = 1;
-            // zone_verify[self->cells[zone_row][zone_column].number] = 1;
+            zone_verify[self->cells[zone_row][zone_column].number] = 1;
         }
-
     }
     return SUCCESS;    
 }

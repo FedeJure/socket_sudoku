@@ -135,7 +135,7 @@ int _server_proccess_verify_command(server_t* self,int client_fd) {
     char* response;
     int length;
     int verified = sudoku_verify(self->sudoku);
-    if (verified < 0) {
+    if (verified != SUCCESS) {
         response = "ERROR\n";
     }
     else {
