@@ -29,9 +29,10 @@ int start_server(char* service) {
     if (socket_listen(&socket, service) == -1) {
         return ERROR;
     }
-    if (server_command_receive(&self) == -1) {
-        return ERROR;
+    while (self.socket->fd != -1) {
+        server_command_receive(&self);
     }
+
 
     return SUCCESS;
 }
@@ -44,16 +45,19 @@ int server_command_receive(server_t* self) {
         return -1;
     }
 
-    while (true) {
-        if (socket_read(client_fd, buffer, 1) < 1) {
+    while (client_fd != -1) {
+
+        if (socket_read(client_fd, buffer, 1) < 0) {
             continue;
         }
+
         
         if (_server_proccess_command(self, client_fd, buffer) < 1) {
             continue;
         }
 
     }
+
 
     return SUCCESS;
 }
@@ -136,10 +140,10 @@ int _server_proccess_verify_command(server_t* self,int client_fd) {
     int length;
     int verified = sudoku_verify(self->sudoku);
     if (verified != SUCCESS) {
-        response = "ERROR\n";
+        response = "ERROR";
     }
     else {
-        response = "OK\n";
+        response = "OK";
     }
     length = strlen(response);
     if (socket_send_next_length(client_fd, length) < 0 ) {

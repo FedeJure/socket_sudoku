@@ -21,14 +21,17 @@ int start_client(char* address, char* service) {
         return ERROR;
     }
 
-    if (socket_connect(&socket, address, service)) {
+    if (socket_connect(&socket, address, service) == ERROR) {
         return ERROR;
     }
+
     while (socket.fd != -1) {
+
         fflush(stdin);
         char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);        
         _proccess_command(&socket, input_command);
     }
+
     return SUCCESS;
 }
 
@@ -38,7 +41,6 @@ int _proccess_command(socket_t* socket, const char* buffer) {
         return ERROR;
     }
     if (buffer[0] == ' ') {
-        fprintf(stderr,"%s\n","No pueden haber espacios antes de un comando.");
         return ERROR;
     }
     char command[COMMAND_LENGTH];
@@ -112,9 +114,11 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
     
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
+        free(received);
         return ERROR;
     }
-    printf("%s", received);
+    printf("%s\n", received);
+    free(received);
     return SUCCESS;
 }
 
@@ -133,11 +137,11 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
     
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
+        free(received);
         return ERROR;
     }
-
-    printf("%s", received);
-
+    fprintf(stdout,"%s\n", received);
+    free(received);
     return SUCCESS;
 }
 
@@ -153,9 +157,11 @@ int _client_proccess_reset(socket_t* socket, const char* buffer) {
     if (length < 0) { return ERROR; }
     char* received = malloc(sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
+        free(received);
         return ERROR;
     }
-    printf("%s", received);
+    fprintf(stdout,"%s\n", received);
+    free(received);
     return SUCCESS;
 }
 

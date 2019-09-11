@@ -18,7 +18,7 @@
 #define ALLOWED_CONNECTIONS 1
 #define BUFFER_SIZE 30
 
-#define ERROR 1
+#define ERROR -1
 #define SUCCESS 0
 
 int socket_init(socket_t* self) {
@@ -27,6 +27,7 @@ int socket_init(socket_t* self) {
 }
 
 int socket_release(socket_t* self) {
+    shutdown(self->fd, SHUT_RDWR);
     close(self->fd);
     self->fd = -1;
     return SUCCESS;
@@ -34,30 +35,25 @@ int socket_release(socket_t* self) {
 
 int socket_connect(socket_t* self, const char* address, char* service) {
     struct sockaddr_in ip4addr;
-    // struct addrinfo *ai_list, *ptr;
-
+    struct addrinfo *ai_list, *ptr;
+    struct addrinfo hints;
+    int res;
     self->service = service;
-    ip4addr.sin_family = AF_INET;
-    ip4addr.sin_port = htons(atoi(service));
 
-    // int s = getaddrinfo(address, service, &ip4addr, &ai_list);
-    inet_pton(AF_INET, address, &ip4addr.sin_addr);
-    
-    // bool are_we_connected = false;
-    // for (ptr = ai_list; ptr != NULL && are_we_connected == false; ptr = ptr->ai_next) {
-    //     // TODO: chequear errores
-    //     int res = connect(self->fd, ptr->ai_addr, ptr->ai_addrlen);
-    //     if (res == -1) {
-    //         close(self->fd);
-    //     }
-    //     are_we_connected = (s != -1); // nos conectamos?
-    // }
+    res = getaddrinfo(address, service, &hints, &ai_list);
 
-    int res = connect(self->fd,(struct sockaddr*)&ip4addr, sizeof(ip4addr));
+    if (res < 0 ) return ERROR;
     
-    if (res == -1) {
-        return ERROR;
+    for (ptr = ai_list; (void*)ptr != NULL; ptr = ptr->ai_next) {
+        ip4addr.sin_addr.s_addr = *((uint32_t*) & (((struct sockaddr_in*)ptr->ai_addr)->sin_addr));;
+        ip4addr.sin_family = AF_INET;
+        ip4addr.sin_port = htons(atoi(service));
+        res = connect(self->fd, (struct sockaddr*)&ip4addr, sizeof(ip4addr));
+        if (res == -1) {
+            continue;
+        }
     }
+
 
     return SUCCESS;
 }
@@ -120,7 +116,7 @@ int socket_send(int socket_fd, const char* buffer, int length) {
 }
 
 int socket_send_next_length(int fd, int length) {
-    int32_t conv = htonl(length);
+    int32_t conv = ntohl(length);
     char *data = (char*)&conv;
     return socket_send(fd,data,4);
 }
