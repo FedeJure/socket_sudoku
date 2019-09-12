@@ -12,6 +12,7 @@
 #define PUT "P"
 #define VERIFY "V"
 #define RESET "R"
+#define EXIT "E"
 #define INVALID_CELL "Celda no valida\n"
 #define ERROR 1
 #define SUCCESS 0
@@ -52,7 +53,7 @@ int server_command_receive(server_t* self) {
         }
 
         
-        if (_server_proccess_command(self, client_fd, buffer) < 1) {
+        if (_server_proccess_command(self, &client_fd, buffer) < 1) {
             continue;
         }
 
@@ -62,7 +63,7 @@ int server_command_receive(server_t* self) {
     return SUCCESS;
 }
 
-int _server_proccess_command(server_t* self, int client_fd, const char* command) {
+int _server_proccess_command(server_t* self, int* client_fd, const char* command) {
     if (strcmp(command, GET) == 0) {
         return _server_proccess_get_command(self, client_fd);
     }
@@ -75,6 +76,9 @@ int _server_proccess_command(server_t* self, int client_fd, const char* command)
     else if (strcmp(command,VERIFY) == 0) {
         return _server_proccess_verify_command(self, client_fd);
     }
+    else if (strcmp(command,EXIT) == 0) {
+        return _server_proccess_exit_command(self,client_fd);
+    }
     return SUCCESS;
 }
 
@@ -83,14 +87,14 @@ int _server_build_board_to_send(sudoku_t* sudoku, int size, int*** values ) {
     return SUCCESS;
 }
 
-int _server_proccess_get_command(server_t* self, int client_fd) {
-    return _server_send_board(self, client_fd);
+int _server_proccess_get_command(server_t* self, int* client_fd) {
+    return _server_send_board(self, *client_fd);
 }
 
-int _server_proccess_put_command(server_t* self, int client_fd) {
+int _server_proccess_put_command(server_t* self, int* client_fd) {
 
     char input[3];
-    if (socket_read(client_fd, input, 3) < 0) {
+    if (socket_read(*client_fd, input, 3) < 0) {
         return -1;
     };
     int row = input[0];
@@ -101,14 +105,14 @@ int _server_proccess_put_command(server_t* self, int client_fd) {
         char* response = INVALID_CELL;
         int length = strlen(response);
 
-        if ( socket_send_next_length(client_fd, length) < 0) {
+        if ( socket_send_next_length(*client_fd, length) < 0) {
             return ERROR;
         }
-        if ( socket_send(client_fd,response,length) < 0) {
+        if ( socket_send(*client_fd,response,length) < 0) {
             return ERROR;
         }
     }
-    return _server_send_board(self, client_fd);
+    return _server_send_board(self, *client_fd);
 }
 
 int _server_send_board(server_t* self, int fd) {
@@ -130,12 +134,12 @@ int _server_send_board(server_t* self, int fd) {
     return SUCCESS;
 }
 
-int _server_proccess_reset_command(server_t* self,int client_fd) {
+int _server_proccess_reset_command(server_t* self,int* client_fd) {
     sudoku_clean(self->sudoku);
-    return _server_send_board(self,client_fd);
+    return _server_send_board(self,*client_fd);
 }
 
-int _server_proccess_verify_command(server_t* self,int client_fd) {
+int _server_proccess_verify_command(server_t* self,int* client_fd) {
     char* response;
     int length;
     int verified = sudoku_verify(self->sudoku);
@@ -146,8 +150,13 @@ int _server_proccess_verify_command(server_t* self,int client_fd) {
         response = "OK";
     }
     length = strlen(response);
-    if (socket_send_next_length(client_fd, length) < 0 ) {
+    if (socket_send_next_length(*client_fd, length) < 0 ) {
         return ERROR;
     }
-    return socket_send(client_fd, response, length);
+    return socket_send(*client_fd, response, length);
+}
+
+int _server_proccess_exit_command(server_t* self,int* client_fd) {
+    *client_fd = -1;
+    return SUCCESS;
 }

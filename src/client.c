@@ -25,6 +25,7 @@ int start_client(char* address, char* service) {
         return ERROR;
     }
 
+
     while (socket.fd != -1) {
 
         fflush(stdin);
@@ -168,6 +169,10 @@ int _client_proccess_reset(socket_t* socket, const char* buffer) {
 
 
 int _client_proccess_exit(socket_t* socket, const char* buffer) {
+    if (socket_send(socket->fd, "E", 1) < 0) {
+        return ERROR;
+    }
     socket_release(socket);
+
     return SUCCESS;
 }

@@ -12,10 +12,11 @@ typedef struct {
 
 int start_server(char* service);
 int server_command_receive(server_t* self);
-int _server_proccess_command(server_t* self, int client_fd, const char* command);
-int _server_proccess_get_command(server_t* self, int client_fd);
-int _server_proccess_put_command(server_t* self, int client_fd);
+int _server_proccess_command(server_t* self, int* client_fd, const char* command);
+int _server_proccess_get_command(server_t* self, int* client_fd);
+int _server_proccess_put_command(server_t* self, int* client_fd);
 int _server_send_board(server_t* self, int fd);
-int _server_proccess_reset_command(server_t* self,int client_fd);
-int _server_proccess_verify_command(server_t* self,int client_fd);
+int _server_proccess_reset_command(server_t* self,int* client_fd);
+int _server_proccess_verify_command(server_t* self,int* client_fd);
+int _server_proccess_exit_command(server_t* self,int* client_fd);
 #endif
