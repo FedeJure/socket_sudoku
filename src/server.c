@@ -48,12 +48,12 @@ int server_command_receive(server_t* self) {
     while (client_fd != -1) {
 
         if (socket_read(client_fd, buffer, 1) < 0) {
-            continue;
+            break;
         }
 
         
-        if (_server_proccess_command(self, client_fd, buffer) < 1) {
-            continue;
+        if (_server_proccess_command(self, client_fd, buffer) == ERROR) {
+            break;
         }
 
     }

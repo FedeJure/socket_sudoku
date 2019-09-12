@@ -94,7 +94,7 @@ int socket_read(int client_fd, char* buffer, int size) {
     int readed_size = 0;
     while (readed_size < size) {      
         int res = recv(client_fd,(void*)&buffer[readed_size], size-readed_size, 0);
-        if (res < 0) {
+        if (res < 0 || res == 0) {
             return ERROR;
         }
         readed_size+=res;
