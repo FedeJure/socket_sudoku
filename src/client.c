@@ -80,6 +80,7 @@ int _client_proccess_get(socket_t* socket, const char * buffer) {
     if (length < 0) { return -1; }
     
     char* received = malloc(sizeof(char)*length);
+    bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0 ) {
         return ERROR;
     }
@@ -113,6 +114,7 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
     if (length < 0) { return ERROR; }
     
     char* received = malloc(sizeof(char)*length);
+    bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
         free(received);
         return ERROR;
@@ -136,6 +138,7 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
     if (length < 0) { return ERROR; }
     
     char* received = malloc(sizeof(char)*length);
+    bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
         free(received);
         return ERROR;
@@ -156,6 +159,7 @@ int _client_proccess_reset(socket_t* socket, const char* buffer) {
     int length = socket_read_next_length(socket->fd);
     if (length < 0) { return ERROR; }
     char* received = malloc(sizeof(char)*length);
+    bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
         free(received);
         return ERROR;

@@ -15,7 +15,6 @@
 #define INVALID_CELL "Celda no valida\n"
 #define ERROR 1
 #define SUCCESS 0
- 
 int start_server(char* service) {
     sudoku_t sudoku;
     sudoku_init(&sudoku);
