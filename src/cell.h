@@ -1,3 +1,4 @@
+// Copyright [2019] <Federico Jure>
 #ifndef _CELL_E
 #define _CELL_E
 

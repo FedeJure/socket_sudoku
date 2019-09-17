@@ -1,4 +1,5 @@
-#include "sudoku.h"
+// Copyright [2019] <Federico Jure>
+#include "./sudoku.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,13 +7,12 @@
 #define ERROR 1
 #define SUCCESS 0
 
-
 int sudoku_init(sudoku_t* self) {
     int board_values[SUDOKU_SIZE][SUDOKU_SIZE] = {0};
     _sudoku_read_source_file(board_values);
     _sudoku_init_cells(self, board_values);
-    
-    return SUCCESS; 
+
+    return SUCCESS;
 }
 
 int sudoku_draw(sudoku_t* self, char* buffer) {
@@ -54,9 +54,9 @@ int sudoku_clean(sudoku_t* self) {
                 self->cells[i][j].number = 0;
             }
         }
-        
+
     }
-    
+
     return SUCCESS;
 }
 int sudoku_verify(sudoku_t* self) {
@@ -82,12 +82,11 @@ int sudoku_verify(sudoku_t* self) {
             zone_verify[self->cells[zone_row][zone_column].number] = 1;
         }
     }
-    return SUCCESS;    
+    return SUCCESS;
 }
-    
 
 
-int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {    
+int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
     FILE* file;
     file = fopen(FILE_NAME, "r");
     int row_number = 0;
@@ -117,7 +116,7 @@ int sudoku_get_board(sudoku_t* self, int*** values) {
         for (int j = 0; j < SUDOKU_SIZE; j++) {
             *values[i][j] = self->cells[i][j].number;
         }
-        
+
     }
     return SUCCESS;
 }
@@ -133,7 +132,6 @@ int _sudoku_init_cells(sudoku_t* self, int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
     }
     return SUCCESS;
 }
-
 
 void _sudoku_draw_line(char* buffer) {
     char* aux =  "U---+---+---U---+---+---U---+---+---U\n";
@@ -164,6 +162,6 @@ int row_draw(int size, cell_t cells[size][size], int row, char* buffer) {
 
     strcat(buffer, aux);
 
-    strcat(buffer, "U\n");    
+    strcat(buffer, "U\n");
     return 0;
 }

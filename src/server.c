@@ -1,11 +1,11 @@
-#include "server.h"
+// Copyright [2019] <Federico Jure>
+#include "./server.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include <arpa/inet.h>
 #include <strings.h>
-
 
 #define PUT_LENGTH 12
 #define GET "G"
@@ -32,7 +32,6 @@ int start_server(char* service) {
         server_command_receive(&self);
     }
 
-
     return SUCCESS;
 }
 
@@ -47,12 +46,11 @@ int server_command_receive(server_t* self) {
     while (client_fd != -1) {
         if (socket_read(client_fd, buffer, 1) < 0) {
             break;
-        } 
+        }
         if (_server_proccess_command(self, client_fd, buffer) == ERROR) {
             break;
         }
     }
-
 
     return SUCCESS;
 }
@@ -83,7 +81,6 @@ int _server_proccess_get_command(server_t* self, int client_fd) {
 }
 
 int _server_proccess_put_command(server_t* self, int client_fd) {
-
     char input[3];
     if (socket_read(client_fd, input, 3) < 0) {
         return -1;

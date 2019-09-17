@@ -1,7 +1,8 @@
+// Copyright [2019] <Federico Jure>
 #ifndef _SUDOKU_E_
 #define _SUDOKU_E_
 
-#include "cell.h"
+#include "./cell.h"
 
 #define SUDOKU_SIZE 9
 #define FILE_NAME "board.txt"
@@ -23,6 +24,5 @@ void _sudoku_draw_line(char* buffer);
 void _sudoku_draw_separator(char* buffer);
 int send_length(int fd, int length);
 int row_draw(int size, cell_t cells[size][size], int row, char* buffer);
-
 
 #endif

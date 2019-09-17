@@ -1,10 +1,11 @@
-#include "main.h"
+// Copyright [2019] <Federico Jure>
+#include "./main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "client.h"
-#include "server.h"
-#include "signal.h"
+#include "./client.h"
+#include "./server.h"
+#include "./signal.h"
 
 #define CLIENT_COMMAND "client"
 #define SERVER_COMMAND "server"
@@ -27,7 +28,7 @@ int main (int argc, char* argv[]) {
 
 int _check_params(int argc, char* argv[]) {
     int count_commands = argc - 1;
-    
+
     if (count_commands < SERVER_COMMAND_COUNT || count_commands > CLIENT_COMMAND_COUNT) {
         exit(ERROR);
     }
@@ -50,7 +51,7 @@ int _extract_params(int argc,char* argv[], char** address, char** service) {
     else {
         *service = argv[2];
     }
-    
+
     return ERROR;
 }
 

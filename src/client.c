@@ -1,4 +1,5 @@
-#include "client.h"
+// Copyright [2019] <Federico Jure>
+#include "./client.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -33,9 +34,8 @@ int start_client(char* address, char* service) {
     }
 
     while (socket.fd != -1) {
-
         fflush(stdin);
-        char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);        
+        char* input_command = fgets(input_command, COMMAND_LENGTH, stdin);
         _proccess_command(&socket, input_command);
     }
 
@@ -43,7 +43,6 @@ int start_client(char* address, char* service) {
 }
 
 int _proccess_command(socket_t* socket, const char* buffer) {
-
     if (strlen(buffer) > COMMAND_LENGTH) { return ERROR; }
     if (buffer[0] == ' ') { return ERROR; }
     char command[COMMAND_LENGTH];
@@ -59,13 +58,13 @@ int _proccess_command(socket_t* socket, const char* buffer) {
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
     if (strlen(buffer) > GET_LENGTH) { return ERROR; }
-    
+
     if (socket_send(socket->fd, "G",COMMAND_CODE_LENGTH) < 0) {
         return ERROR;
     }
     int length = socket_read_next_length(socket->fd);
     if (length < 0) { return -1; }
-    
+
     char* received = malloc(sizeof(char)*length);
     bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0 ) {
@@ -100,7 +99,7 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
 
     int length = socket_read_next_length(socket->fd);
     if (length < 0) { return ERROR; }
-    
+
     char* received = malloc(sizeof(char)*length);
     bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
@@ -112,9 +111,7 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
     return SUCCESS;
 }
 
-
 int _client_proccess_verify(socket_t* socket, const char* buffer) {
-
     if (strlen(buffer) > VERIFY_LENGTH) {
         return ERROR;
     }
@@ -124,7 +121,7 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
 
     int length = socket_read_next_length(socket->fd);
     if (length < 0) { return ERROR; }
-    
+
     char* received = malloc(sizeof(char)*length);
     bzero(received, sizeof(char)*length);
     if (socket_read(socket->fd, received, length) < 0) {
@@ -136,11 +133,10 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
     return SUCCESS;
 }
 
-
 int _client_proccess_reset(socket_t* socket, const char* buffer) {
     if (strlen(buffer) > RESET_LENGTH) {
         return ERROR;
-    } 
+    }
     if (socket_send(socket->fd, "R", COMMAND_CODE_LENGTH) < 0) {
         return ERROR;
     }
@@ -156,7 +152,6 @@ int _client_proccess_reset(socket_t* socket, const char* buffer) {
     free(received);
     return SUCCESS;
 }
-
 
 
 int _client_proccess_exit(socket_t* socket, const char* buffer) {

@@ -1,4 +1,5 @@
-#include "cell.h"
+// Copyright [2019] <Federico Jure>
+#include "./cell.h"
 
 int cell_restore(cell_t* self) {
     if (self->editable == 1) {
