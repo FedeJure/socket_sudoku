@@ -17,28 +17,29 @@ int sudoku_init(sudoku_t* self) {
 
 int sudoku_draw(sudoku_t* self, char* buffer) {
     _sudoku_draw_separator(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,0, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 0, buffer);
     _sudoku_draw_line(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,1, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 1, buffer);
     _sudoku_draw_line(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,2, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 2, buffer);
     _sudoku_draw_separator(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,3, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 3, buffer);
     _sudoku_draw_line(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,4, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 4, buffer);
     _sudoku_draw_line(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,5, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 5, buffer);
     _sudoku_draw_separator(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,6, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 6, buffer);
     _sudoku_draw_line(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,7, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 7, buffer);
     _sudoku_draw_line(buffer);
-    row_draw(SUDOKU_SIZE,self->cells,8, buffer);
+    row_draw(SUDOKU_SIZE, self->cells, 8, buffer);
     _sudoku_draw_separator(buffer);
     return SUCCESS;
 }
 int sudoku_put_in_position(sudoku_t* self, int value, int row, int column) {
-    if (value > 9 || value < 0 || row > 9 || row < 0 || column > 9 || column < 0) {
+    if (value > 9 || value < 0 || row > 9 || row < 0
+    || column > 9 || column < 0) {
         return ERROR;
     }
     if (self->cells[row-1][column-1].editable == 0) {
@@ -66,15 +67,18 @@ int sudoku_verify(sudoku_t* self) {
         int column_verify[SUDOKU_SIZE+1] = {0};
         int zone_verify[SUDOKU_SIZE+1] = {0};
         for (int j = 0; j < SUDOKU_SIZE; j++) {
-            if (self->cells[i][j].number != 0 && row_verify[self->cells[i][j].number] != 0) {
+            if (self->cells[i][j].number != 0
+                && row_verify[self->cells[i][j].number] != 0) {
                 return ERROR;
             }
-            if (self->cells[j][i].number != 0 && column_verify[self->cells[j][i].number] != 0) {
+            if (self->cells[j][i].number != 0
+                && column_verify[self->cells[j][i].number] != 0) {
                 return ERROR;
             }
             int zone_row = (j / zone_size) + zone_size * (i / zone_size);
             int zone_column = (j % zone_size) + zone_size * (i % zone_size);
-            if (self->cells[zone_row][zone_column].number != 0 && zone_verify[self->cells[zone_row][zone_column].number] != 0) {
+            if (self->cells[zone_row][zone_column].number != 0
+                && zone_verify[self->cells[zone_row][zone_column].number] != 0) {
                 return ERROR;
             }
             row_verify[self->cells[i][j].number] = 1;
@@ -91,7 +95,7 @@ int _sudoku_read_source_file(int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
     file = fopen(FILE_NAME, "r");
     int row_number = 0;
     while(feof(file) == 0) {
-        int res = fscanf(file,"%d %d %d %d %d %d %d %d %d",
+        int res = fscanf(file, "%d %d %d %d %d %d %d %d %d",
         &values[row_number][0],
         &values[row_number][1],
         &values[row_number][2],
@@ -135,12 +139,12 @@ int _sudoku_init_cells(sudoku_t* self, int values[SUDOKU_SIZE][SUDOKU_SIZE]) {
 
 void _sudoku_draw_line(char* buffer) {
     char* aux =  "U---+---+---U---+---+---U---+---+---U\n";
-    strcat(buffer,aux);
+    strcat(buffer, aux);
 }
 
 void _sudoku_draw_separator(char* buffer) {
     char* aux = "U===========U===========U===========U\n";
-    strcat(buffer,aux);
+    strcat(buffer, aux);
 }
 
 int row_draw(int size, cell_t cells[size][size], int row, char* buffer) {
@@ -152,13 +156,13 @@ int row_draw(int size, cell_t cells[size][size], int row, char* buffer) {
 
     char* format = "U %c | %c | %c "; //12
     char aux[strlen(format)];
-    sprintf(aux, format, values[0],values[1],values[2]);
+    sprintf(aux, format, values[0], values[1], values[2]);
     strcat(buffer, aux);
 
-    sprintf(aux, format, values[3],values[4],values[5]);
+    sprintf(aux, format, values[3], values[4], values[5]);
     strcat(buffer, aux);
 
-    sprintf(aux, format, values[6],values[7],values[8]);
+    sprintf(aux, format, values[6], values[7], values[8]);
 
     strcat(buffer, aux);
 

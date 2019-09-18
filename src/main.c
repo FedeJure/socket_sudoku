@@ -23,28 +23,32 @@ int main (int argc, char* argv[]) {
 
     _extract_params(argc, argv, &address, &service);
     int is_server = (strcmp(SERVER_COMMAND, argv[1]) == 0);
-    return is_server ? _start_server(service) : _start_client(address, service);
+    return is_server ? _start_server(service) :
+         _start_client(address, service);
 }
 
 int _check_params(int argc, char* argv[]) {
     int count_commands = argc - 1;
 
-    if (count_commands < SERVER_COMMAND_COUNT || count_commands > CLIENT_COMMAND_COUNT) {
+    if (count_commands < SERVER_COMMAND_COUNT
+        || count_commands > CLIENT_COMMAND_COUNT) {
         exit(ERROR);
     }
 
-    if (count_commands > 0 && strcmp(argv[1], CLIENT_COMMAND) == 0 && count_commands != CLIENT_COMMAND_COUNT) {
+    if (count_commands > 0 && strcmp(argv[1], CLIENT_COMMAND) == 0
+        && count_commands != CLIENT_COMMAND_COUNT) {
         exit(ERROR);
     }
 
-    if (count_commands > 0 && strcmp(argv[1], SERVER_COMMAND) == 0 && count_commands != SERVER_COMMAND_COUNT) {
+    if (count_commands > 0 && strcmp(argv[1], SERVER_COMMAND) == 0
+        && count_commands != SERVER_COMMAND_COUNT) {
         exit(ERROR);
     }
     return SUCCESS;
 }
 
-int _extract_params(int argc,char* argv[], char** address, char** service) {
-    if (strcmp(argv[1],CLIENT_COMMAND) == 0) {
+int _extract_params(int argc, char* argv[], char** address, char** service) {
+    if (strcmp(argv[1], CLIENT_COMMAND) == 0) {
         *address = argv[2];
         *service = argv[3];
     }

@@ -46,20 +46,30 @@ int _proccess_command(socket_t* socket, const char* buffer) {
     if (strlen(buffer) > COMMAND_LENGTH) { return ERROR; }
     if (buffer[0] == ' ') { return ERROR; }
     char command[COMMAND_LENGTH];
-    bzero(command,COMMAND_LENGTH);
-    sscanf(buffer,"%s",command);
-    if (strcmp(command,GET) == 0){ return _client_proccess_get(socket, buffer); }
-    if (strcmp(command,PUT) == 0) { return _client_proccess_put(socket, buffer); }
-    if (strcmp(command,VERIFY) == 0) { return _client_proccess_verify(socket, buffer); }
-    if (strcmp(command,RESET) == 0) { return _client_proccess_reset(socket, buffer); }
-    if (strcmp(command,EXIT) == 0) { return _client_proccess_exit(socket, buffer); }
+    bzero(command, COMMAND_LENGTH);
+    sscanf(buffer, "%s", command);
+    if (strcmp(command, GET) == 0){
+        return _client_proccess_get(socket, buffer);
+    }
+    if (strcmp(command, PUT) == 0) {
+        return _client_proccess_put(socket, buffer);
+    }
+    if (strcmp(command, VERIFY) == 0) {
+        return _client_proccess_verify(socket, buffer);
+    }
+    if (strcmp(command, RESET) == 0) {
+        return _client_proccess_reset(socket, buffer);
+    }
+    if (strcmp(command, EXIT) == 0) {
+        return _client_proccess_exit(socket, buffer);
+    }
     return ERROR;
 }
 
 int _client_proccess_get(socket_t* socket, const char * buffer) {
     if (strlen(buffer) > GET_LENGTH) { return ERROR; }
 
-    if (socket_send(socket->fd, "G",COMMAND_CODE_LENGTH) < 0) {
+    if (socket_send(socket->fd, "G", COMMAND_CODE_LENGTH) < 0) {
         return ERROR;
     }
     int length = socket_read_next_length(socket->fd);
@@ -80,13 +90,14 @@ int _client_proccess_put(socket_t* socket, const char* buffer) {
     int row;
     int column;
     if (strlen(buffer) > PUT_LENGTH) { return ERROR; }
-    sscanf(buffer, "put %d in %d,%d\n", &value, &row, &column);
+    sscanf(buffer, "put %d in %d, %d\n", &value, &row, &column);
     if ((value < 1 || value > 9)) {
-        fprintf(stderr,"%s\n","​Error en el valor ingresado. Rango soportado: [1,9]");
+        fprintf(stderr, "%s\n", "​Error en el valor ingresado. Rango soportado: [1, 9]");
         return ERROR;
     }
     if ((row < 1 || row > 9) || (column < 1 || column > 9)) {
-        fprintf(stderr,"%s\n","Error en los índices. Rango soportado: [1,9]");
+        fprintf(stderr, "%s\n", "Error en los índices. \
+        Rango soportado: [1, 9]");
         return ERROR;
     }
     if (socket_send(socket->fd, "P", COMMAND_CODE_LENGTH) < 0) {
@@ -128,7 +139,7 @@ int _client_proccess_verify(socket_t* socket, const char* buffer) {
         free(received);
         return ERROR;
     }
-    fprintf(stdout,"%s\n", received);
+    fprintf(stdout, "%s\n", received);
     free(received);
     return SUCCESS;
 }
@@ -148,7 +159,7 @@ int _client_proccess_reset(socket_t* socket, const char* buffer) {
         free(received);
         return ERROR;
     }
-    fprintf(stdout,"%s\n", received);
+    fprintf(stdout, "%s\n", received);
     free(received);
     return SUCCESS;
 }
